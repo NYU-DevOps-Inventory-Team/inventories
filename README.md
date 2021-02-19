@@ -1,0 +1,2 @@
+# inventories
+DevOps Inventory Team
