@@ -13,7 +13,7 @@ from flask import Flask
 app = Flask(__name__)
 app.config.from_object("config")
 
-# Import the rutes After the Flask app is created
+# Import the routes After the Flask app is created
 from service import routes, models
 
 # Set up logging for production
@@ -31,7 +31,7 @@ if __name__ != "__main__":
     app.logger.info("Logging handler established")
 
 app.logger.info(70 * "*")
-app.logger.info("  M Y   S E R V I C E   R U N N I N G  ".center(70, "*"))
+app.logger.info(" I N V E N T O R Y   S E R V I C E   R U N N I N G  ".center(70, "*"))
 app.logger.info(70 * "*")
 
 try:
@@ -41,4 +41,4 @@ except Exception as error:
     # gunicorn requires exit code 4 to stop spawning workers when they die
     sys.exit(4)
 
-app.logger.info("Service inititalized!")
+app.logger.info("Service initialized!")

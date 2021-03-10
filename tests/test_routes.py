@@ -1,5 +1,5 @@
 """
-TestYourResourceModel API Service Test Suite
+TestInventoryModel API Service Test Suite
 
 Test cases can be run with the following:
   nosetests -v --with-spec --spec-color
