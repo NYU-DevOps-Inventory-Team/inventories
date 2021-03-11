@@ -35,6 +35,6 @@ class TestInventoryModel(unittest.TestCase):
     #  T E S T   C A S E S
     ######################################################################
 
-    def test_XXXX(self):
+    def test_index(self):
         """ Test something """
         self.assertTrue(True)
