@@ -26,7 +26,7 @@ class InventoryModel(db.Model):
     app = None
 
     # Table Schema
-    id = db.Column(db.Integer, primary_key=True)
+    product_in_inventory_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     restock_threshold = db.Column(db.Integer)
@@ -35,14 +35,14 @@ class InventoryModel(db.Model):
     unit_price = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
-        return "<InventoryModel %r id=[%s]>" % (self.name, self.id)
+        return "<InventoryModel %r id=[%s]>" % (self.name, self.product_in_inventory_id)
 
     def create(self):
         """
         Creates a InventoryModel to the database
         """
         logger.info("Creating %s", self.name)
-        self.id = None  # id must be none to generate next primary key
+        self.product_in_inventory_id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
@@ -62,7 +62,7 @@ class InventoryModel(db.Model):
     def serialize(self):
         """ Serializes a InventoryModel into a dictionary """
         return {
-            "id": self.id,
+            "product_in_inventory_id": self.product_in_inventory_id,
             "name": self.name,
             "quantity": self.quantity,
             "restock_threshold": self.restock_threshold,

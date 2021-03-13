@@ -20,6 +20,8 @@ from flask_api import status  # HTTP Status Codes
 # For this example we'll use SQLAlchemy, a popular ORM that supports a
 # variety of backends including SQLite, MySQL, and PostgreSQL
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.exceptions import NotFound
+
 from service.models import InventoryModel, DataValidationError
 
 # Import Flask application
@@ -136,10 +138,12 @@ def create_product_in_inventory():
     product_in_inventory.deserialize(request.get_json())
     product_in_inventory.create()
     message = product_in_inventory.serialize()
-    location_url = url_for("get_inventory", product_in_inventory=product_in_inventory.id, _external=True)
+    location_url = url_for("get_product_in_inventory",
+                           product_in_inventory=product_in_inventory.product_in_inventory_id,
+                           _external=True)
+    location_url = "not implemented"
     return make_response(
-        jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
-    )
+        jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
 
 
 ######################################################################
