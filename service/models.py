@@ -27,7 +27,12 @@ class InventoryModel(db.Model):
 
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63))
+    name = db.Column(db.String(63), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    restock_threshold = db.Column(db.Integer)
+    supplier_name = db.Column(db.String(63))
+    supplier_id = db.Column(db.Integer, nullable=False)
+    unit_price = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return "<InventoryModel %r id=[%s]>" % (self.name, self.id)
@@ -56,7 +61,15 @@ class InventoryModel(db.Model):
 
     def serialize(self):
         """ Serializes a InventoryModel into a dictionary """
-        return {"id": self.id, "name": self.name}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "quantity": self.quantity,
+            "restock_threshold": self.restock_threshold,
+            "supplier_name": self.supplier_name,
+            "supplier_id": self.supplier_id,
+            "unit_price": self.unit_price
+            }
 
     def deserialize(self, data):
         """
@@ -67,6 +80,11 @@ class InventoryModel(db.Model):
         """
         try:
             self.name = data["name"]
+            self.quantity = data["quantity"]
+            self.restock_threshold = data["restock_threshold"]
+            self.supplier_name = data["supplier_name"]
+            self.supplier_id = data["supplier_id"]
+            self.unit_price = data["unit_price"]
         except KeyError as error:
             raise DataValidationError(
                 "Invalid InventoryModel: missing " + error.args[0]
