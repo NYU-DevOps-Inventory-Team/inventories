@@ -25,6 +25,7 @@ from service.models import InventoryModel, DataValidationError
 # Import Flask application
 from . import app
 
+
 ######################################################################
 # Error Handlers
 ######################################################################
@@ -114,16 +115,17 @@ def index():
         jsonify(
             name="Inventory REST API Service",
             version="1.0",
-            paths=url_for("list_inventory", _external=True),
+            # paths=url_for("list_inventory", _external=True),
         ),
         status.HTTP_200_OK,
     )
 
+
 ######################################################################
-# ADD A NEW PET
+# ADD A NEW PRODUCT IN INVENTORY
 ######################################################################
 @app.route("/inventory", methods=["POST"])
-def create_pets():
+def create_product_in_inventory():
     """
     Creates a new product in inventory
     This endpoint will create a product in inventory based the data in the body that is posted
@@ -149,6 +151,7 @@ def init_db():
     """ Initialies the SQLAlchemy app """
     global app
     InventoryModel.init_db(app)
+
 
 def check_content_type(content_type):
     """ Checks that the media type is correct """
