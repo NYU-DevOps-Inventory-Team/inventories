@@ -114,3 +114,18 @@ class TestInventoryModel(unittest.TestCase):
         self.assertEqual(found_product_in_inventory.product_in_inventory_id, products_in_inventory[1].product_in_inventory_id)
         self.assertEqual(found_product_in_inventory.name, products_in_inventory[1].name)
         self.assertEqual(found_product_in_inventory.quantity, products_in_inventory[1].quantity)
+
+    def test_find_by_name(self):
+        """ Find a product in inventory by Name """
+        products_in_inventory = [_test_create_product_in_inventory(name="test product1", quantity=100, restock_threshold=50,
+                                                   supplier_name="test supplier1", supplier_id=123, unit_price=12.50),
+                 _test_create_product_in_inventory(name="test product2", quantity=100, restock_threshold=50,
+                                                   supplier_name="test supplier2", supplier_id=125, unit_price=12.50),
+                 _test_create_product_in_inventory(name="test product3", quantity=100, restock_threshold=50,
+                                                   supplier_name="test supplier3", supplier_id=127, unit_price=12.50)]
+        for product_in_inventory in products_in_inventory:
+            product_in_inventory.create()
+        found_products_in_inventory = InventoryModel.find_by_name("test product1")
+        self.assertEqual(found_products_in_inventory[0].product_in_inventory_id, products_in_inventory[0].product_in_inventory_id)
+        self.assertEqual(found_products_in_inventory[0].name, products_in_inventory[0].name)
+        self.assertEqual(found_products_in_inventory[0].quantity, products_in_inventory[0].quantity)
