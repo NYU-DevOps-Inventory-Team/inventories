@@ -102,3 +102,19 @@ class TestInventoryServer(TestCase):
         #     new_product_in_inventory["restock_threshold"], test_product_in_inventory.restock_threshold,
         #     "Restock Threshold does not match"
         # )
+
+    # def test_get_product_in_inventory(self):
+    #         """ Get a single Product in Inventory """
+    #         # get the id of the product in inventory
+    #         test_product_in_inventory = self._create_product_in_inventory(1)[0]
+    #         resp = self.app.get(
+    #             "/inventories/{}".format(test_product_in_inventory.id), content_type="application/json"
+    #         )
+    #         self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    #         data = resp.get_json()
+    #         self.assertEqual(data["name"], test_product_in_inventory.name)
+
+    #     def test_get_product_in_inventory_not_found(self):
+    #         """ Get a Product in inventory thats not found """
+    #         resp = self.app.get("/inventories/0")
+    #         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
