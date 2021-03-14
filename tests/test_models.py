@@ -92,3 +92,26 @@ class TestInventoryModel(unittest.TestCase):
         self.assertEqual(product_in_inventory.product_in_inventory_id, 1)
         product_in_inventory = InventoryModel.all()
         self.assertEqual(len(product_in_inventory), 1)
+
+
+    def test_update_a_product_in_inventory(self):
+        """ Update a Product In Inventory """
+        product_in_inventory = _test_create_product_in_inventory(
+            name="test product", quantity=100, restock_threshold=50,
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50) #TODO was this the right way to substitute his pet factory? I took what you did above
+        logging.debug(product_in_inventory)
+        product_in_inventory.create()
+        logging.debug(product_in_inventory)
+        self.assertEqual(product_in_inventory.product_in_inventory_id, 1)
+        # Change it an save it
+        product_in_inventory.supplier_name = "new supplier"
+        original_id = product_in_inventory.product_in_inventory_id
+        product_in_inventory.save()
+        self.assertEqual(product_in_inventory.product_in_inventory_id, original_id)
+        self.assertEqual(product_in_inventory.supplier_name, "new supplier")
+        # Fetch it back and make sure the id hasn't changed
+        # but the data did change
+        product_in_inventory = InventoryModel.all()
+        self.assertEqual(len(product_in_inventory), 1)
+        self.assertEqual(product_in_inventory[0].product_in_inventory_id, 1)
+        self.assertEqual(product_in_inventory[0].supplier_name, "new supplier")

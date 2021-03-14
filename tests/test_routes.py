@@ -102,3 +102,26 @@ class TestInventoryServer(TestCase):
         #     new_product_in_inventory["restock_threshold"], test_product_in_inventory.restock_threshold,
         #     "Restock Threshold does not match"
         # )
+    def test_update_product_in_inventory(self):
+        """ Update an existing Pet """
+        # create a pet to update
+        test_update = _create_test_product_in_inventory(
+            name="test product", quantity=100, restock=50,
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50)
+        resp = self.app.post(
+            "/inventory", json=test_update.serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # update the product in inventory
+        new_product_in_inventory = resp.get_json()
+        logging.debug(new_product_in_inventory)
+        new_product_in_inventory["supplier_name"] = "unknown"
+        resp = self.app.put(
+            "/inventory/{}".format(new_product_in_inventory["product_in_inventory_id"]),
+            json=new_product_in_inventory,
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_product_in_inventory = resp.get_json()
+        self.assertEqual(updated_product_in_inventory["supplier_name"], "unknown")
