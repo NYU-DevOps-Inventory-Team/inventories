@@ -148,20 +148,20 @@ def create_product_in_inventory():
 ######################################################################
 # UPDATE AN EXISTING PRODUCT IN INVENTORY
 ######################################################################
-@app.route("/inventory/<int:by_id>", methods=["PUT"])
-def update_product_in_inventory(by_id):
+@app.route("/inventory/<int:inventory_id>", methods=["PUT"])
+def update_product_in_inventory(inventory_id):
     """
     Update a Product In Inventory
 
     This endpoint will update a Product In Inventory based the body that is posted
     """
-    app.logger.info("Request to update Product In Inventory with id: %s", by_id)
+    app.logger.info("Request to update Product In Inventory with id: %s", inventory_id)
     check_content_type("application/json")
-    product_in_inventory = InventoryModel.find(by_id)
+    product_in_inventory = InventoryModel.find(inventory_id)
     if not product_in_inventory:
-        raise NotFound("Product In Inventory with id '{}' was not found.".format(by_id))
+        raise NotFound("Product In Inventory with id '{}' was not found.".format(inventory_id))
     product_in_inventory.deserialize(request.get_json())
-    product_in_inventory.product_in_inventory_id = by_id
+    product_in_inventory.product_in_inventory_id = inventory_id
     product_in_inventory.save()
     return make_response(jsonify(product_in_inventory.serialize()), status.HTTP_200_OK)
 
