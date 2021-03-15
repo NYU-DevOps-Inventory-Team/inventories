@@ -145,19 +145,20 @@ def create_product_in_inventory():
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
 
+
 ######################################################################
 # LIST ALL INVENTORIES
 ######################################################################
 @app.route("/inventory", methods=["GET"])
-def list_inventories():
+def list_products_in_inventory():
     """ Returns all of the Inventory """
-    app.logger.info("Request for inventory list")
+    app.logger.info("Request for inventory list of all products")
 
-    inventories = InventoryModel.all()
-    results = [inventory.serialize()for inventory in inventories]
+    all_products_in_inventory = InventoryModel.all()
+    results = [inventory.serialize() for inventory in all_products_in_inventory]
 
-    app.logger.info("Returning %d pets", len(results))
-    return make_response(jsonify(results),status.HTTP_200_OK)
+    app.logger.info("Returning %d products in inventory", len(results))
+    return make_response(jsonify(results), status.HTTP_200_OK)
 
 
 ######################################################################

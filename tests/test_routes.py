@@ -56,32 +56,24 @@ class TestInventoryServer(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def _create_inventories(self, count):
+    def _create_products_in_inventory(self, count):
         """ Factory method to create inventories in bulk """
-        inventories = []
+        products_in_inventory = []
         for _ in range(count):
-            test_inventory = _create_test_product_in_inventory(
-            name="test product", quantity=100, restock=50,
-            supplier_name="test supplier", supplier_id=123, unit_price=12.50)
+            test_product_in_inventory = _create_test_product_in_inventory(
+                name="test product", quantity=100, restock=50,
+                supplier_name="test supplier", supplier_id=123, unit_price=12.50)
 
-            # test_inventory = InventoryModel(
-            # name="test product",
-            # quantity=200,
-            # restock_threshold=50,
-            # supplier_name="test supplier",
-            # supplier_id=123,
-            # unit_price=12.50
-            # )
             resp = self.app.post(
-                "/inventory", json=test_inventory.serialize(), content_type="application/json"
+                "/inventory", json=test_product_in_inventory.serialize(), content_type="application/json"
             )
             self.assertEqual(
                 resp.status_code, status.HTTP_201_CREATED, "Could not create test inventory"
             )
-            new_inventory = resp.get_json()
-            test_inventory.product_in_inventory_id = new_inventory["product_in_inventory_id"]
-            inventories.append(test_inventory)
-        return inventories
+            new_product_in_inventory = resp.get_json()
+            test_product_in_inventory.product_in_inventory_id = new_product_in_inventory["product_in_inventory_id"]
+            products_in_inventory.append(test_product_in_inventory)
+        return products_in_inventory
 
     ######################################################################
     #  P L A C E   T E S T   C A S E S   H E R E
@@ -150,8 +142,8 @@ class TestInventoryServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_product_in_inventory(self):
-        """ Update an existing Pet """
-        # create a pet to update
+        """ Update an existing product inventory """
+        # create a product to update
         test_update = _create_test_product_in_inventory(
             name="test product", quantity=100, restock=50,
             supplier_name="test supplier", supplier_id=123, unit_price=12.50)
@@ -174,8 +166,8 @@ class TestInventoryServer(TestCase):
         self.assertEqual(updated_product_in_inventory["supplier_name"], "unknown")
 
     def test_get_inventory_list(self):
-        """ Get a list of Inventories """
-        self._create_inventories(5)
+        """ Get a list of products in inventory """
+        self._create_products_in_inventory(5)
         resp = self.app.get("/inventory")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
