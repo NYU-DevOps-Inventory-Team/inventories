@@ -138,12 +138,28 @@ def create_product_in_inventory():
     product_in_inventory.deserialize(request.get_json())
     product_in_inventory.create()
     message = product_in_inventory.serialize()
-    # location_url = url_for("get_product_in_inventory", #FIXME I had to comment these three lines to get nosetests to pass for some reason, similar to like he said this wouldn't work in his video
+    # location_url = url_for("get_product_in_inventory",
     #                        product_in_inventory=product_in_inventory.product_in_inventory_id,
     #                        _external=True)
     location_url = "not implemented"
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
+
+######################################################################
+# RETRIEVE A PRODUCT IN INVENTORY
+######################################################################
+@app.route("/inventory/<int:product_in_inventory_id>", methods=["GET"])
+def get_product_in_inventory(product_in_inventory_id):
+    """
+    Retrieve a single product in inventory
+    This endpoint will return a product in inventory based on it's id
+    """
+    app.logger.info("Request for product in inventory with id: %s", product_in_inventory_id)
+    product_in_inventory = InventoryModel.find(product_in_inventory_id)
+    if not product_in_inventory:
+        raise NotFound("Product in inventory with id '{}' was not found.".format(product_in_inventory_id))
+    return make_response(jsonify(product_in_inventory.serialize()), status.HTTP_200_OK)
+
 
 ######################################################################
 # UPDATE AN EXISTING PRODUCT IN INVENTORY
