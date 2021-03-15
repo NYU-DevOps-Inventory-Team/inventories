@@ -172,3 +172,17 @@ class TestInventoryServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(len(data), 5)
+
+    def test_delete_product_in_inventory(self):
+        """ Delete a Product in inventory """
+        test_product_in_inventory = self._create_products_in_inventory(1)[0]
+        resp = self.app.delete(
+            "/inventory/{}".format(test_product_in_inventory.product_in_inventory_id), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        # make sure they are deleted
+        resp = self.app.get(
+            "/inventory/{}".format(test_product_in_inventory.product_in_inventory_id), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)

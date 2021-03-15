@@ -26,6 +26,7 @@ class InventoryModel(db.Model):
     app = None
 
     # Table Schema
+    
     product_in_inventory_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
