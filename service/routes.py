@@ -145,6 +145,7 @@ def create_product_in_inventory():
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
 
+
 ######################################################################
 # RETRIEVE A PRODUCT IN INVENTORY
 ######################################################################
@@ -181,11 +182,10 @@ def update_product_in_inventory(inventory_id):
     product_in_inventory.save()
     return make_response(jsonify(product_in_inventory.serialize()), status.HTTP_200_OK)
 
+
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
-
-
 def init_db():
     """ Initialies the SQLAlchemy app """
     global app
