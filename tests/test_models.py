@@ -93,16 +93,15 @@ class TestInventoryModel(unittest.TestCase):
         product_in_inventory = InventoryModel.all()
         self.assertEqual(len(product_in_inventory), 1)
 
-        # test get product in inventory by id
-
     def test_find_product_in_inventory(self):
         """ Find a product in inventory by ID """
-        products_in_inventory = [_test_create_product_in_inventory(name="test product1", quantity=100, restock_threshold=50,
-                                                   supplier_name="test supplier1", supplier_id=123, unit_price=12.50),
-                 _test_create_product_in_inventory(name="test product2", quantity=100, restock_threshold=50,
-                                                   supplier_name="test supplier2", supplier_id=125, unit_price=12.50),
-                 _test_create_product_in_inventory(name="test product3", quantity=100, restock_threshold=50,
-                                                   supplier_name="test supplier3", supplier_id=127, unit_price=12.50)]
+        products_in_inventory = [
+            _test_create_product_in_inventory(name="test product1", quantity=100, restock_threshold=50,
+                                              supplier_name="test supplier1", supplier_id=123, unit_price=12.50),
+            _test_create_product_in_inventory(name="test product2", quantity=100, restock_threshold=50,
+                                              supplier_name="test supplier2", supplier_id=125, unit_price=12.50),
+            _test_create_product_in_inventory(name="test product3", quantity=100, restock_threshold=50,
+                                              supplier_name="test supplier3", supplier_id=127, unit_price=12.50)]
         for product_in_inventory in products_in_inventory:
             product_in_inventory.create()
         logging.debug(products_in_inventory)
@@ -111,21 +110,47 @@ class TestInventoryModel(unittest.TestCase):
         # find the 2nd pet in the list
         found_product_in_inventory = InventoryModel.find(products_in_inventory[1].product_in_inventory_id)
         self.assertIsNot(found_product_in_inventory, None)
-        self.assertEqual(found_product_in_inventory.product_in_inventory_id, products_in_inventory[1].product_in_inventory_id)
+        self.assertEqual(found_product_in_inventory.product_in_inventory_id,
+                         products_in_inventory[1].product_in_inventory_id)
         self.assertEqual(found_product_in_inventory.name, products_in_inventory[1].name)
         self.assertEqual(found_product_in_inventory.quantity, products_in_inventory[1].quantity)
 
     def test_find_by_name(self):
         """ Find a product in inventory by Name """
-        products_in_inventory = [_test_create_product_in_inventory(name="test product1", quantity=100, restock_threshold=50,
-                                                   supplier_name="test supplier1", supplier_id=123, unit_price=12.50),
-                 _test_create_product_in_inventory(name="test product2", quantity=100, restock_threshold=50,
-                                                   supplier_name="test supplier2", supplier_id=125, unit_price=12.50),
-                 _test_create_product_in_inventory(name="test product3", quantity=100, restock_threshold=50,
-                                                   supplier_name="test supplier3", supplier_id=127, unit_price=12.50)]
+        products_in_inventory = [
+            _test_create_product_in_inventory(name="test product1", quantity=100, restock_threshold=50,
+                                              supplier_name="test supplier1", supplier_id=123, unit_price=12.50),
+            _test_create_product_in_inventory(name="test product2", quantity=100, restock_threshold=50,
+                                              supplier_name="test supplier2", supplier_id=125, unit_price=12.50),
+            _test_create_product_in_inventory(name="test product3", quantity=100, restock_threshold=50,
+                                              supplier_name="test supplier3", supplier_id=127, unit_price=12.50)]
         for product_in_inventory in products_in_inventory:
             product_in_inventory.create()
         found_products_in_inventory = InventoryModel.find_by_name("test product1")
-        self.assertEqual(found_products_in_inventory[0].product_in_inventory_id, products_in_inventory[0].product_in_inventory_id)
+        self.assertEqual(found_products_in_inventory[0].product_in_inventory_id,
+                         products_in_inventory[0].product_in_inventory_id)
         self.assertEqual(found_products_in_inventory[0].name, products_in_inventory[0].name)
         self.assertEqual(found_products_in_inventory[0].quantity, products_in_inventory[0].quantity)
+
+    def test_update_a_product_in_inventory(self):
+        """ Update a Product In Inventory """
+        product_in_inventory = _test_create_product_in_inventory(
+            name="test product", quantity=100, restock_threshold=50,
+            supplier_name="test supplier", supplier_id=123,
+            unit_price=12.50)  # TODO was this the right way to substitute his pet factory? I took what you did above
+        logging.debug(product_in_inventory)
+        product_in_inventory.create()
+        logging.debug(product_in_inventory)
+        self.assertEqual(product_in_inventory.product_in_inventory_id, 1)
+        # Change it an save it
+        product_in_inventory.supplier_name = "new supplier"
+        original_id = product_in_inventory.product_in_inventory_id
+        product_in_inventory.save()
+        self.assertEqual(product_in_inventory.product_in_inventory_id, original_id)
+        self.assertEqual(product_in_inventory.supplier_name, "new supplier")
+        # Fetch it back and make sure the id hasn't changed
+        # but the data did change
+        found_products_in_inventory = InventoryModel.all()
+        self.assertEqual(len(found_products_in_inventory), 1)
+        self.assertEqual(found_products_in_inventory[0].product_in_inventory_id, 1)
+        self.assertEqual(found_products_in_inventory[0].supplier_name, "new supplier")
