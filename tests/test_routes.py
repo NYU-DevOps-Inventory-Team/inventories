@@ -31,7 +31,6 @@ def _create_test_product_in_inventory(name, quantity, restock, supplier_name, su
     )
 
 
-
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
@@ -130,7 +129,51 @@ class TestInventoryServer(TestCase):
         #     new_product_in_inventory["restock_threshold"], test_product_in_inventory.restock_threshold,
         #     "Restock Threshold does not match"
         # )
-    def test_get_inventory_list(self):   
+
+    def test_get_product_in_inventory(self):
+        """ Get a single Product in Inventory """
+        # get the id of the product in inventory
+        test_product_in_inventory = _create_test_product_in_inventory(name="test product1", quantity=100, restock=50,
+                                                                      supplier_name="test supplier1", supplier_id=123,
+                                                                      unit_price=12.50)
+        test_product_in_inventory.create()
+        resp = self.app.get(
+            "/inventory/{}".format(test_product_in_inventory.product_in_inventory_id), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data["name"], test_product_in_inventory.name)
+
+    def test_get_product_in_inventory_not_found(self):
+        """ Get a Product in inventory thats not found """
+        resp = self.app.get("/inventory/0")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_product_in_inventory(self):
+        """ Update an existing Pet """
+        # create a pet to update
+        test_update = _create_test_product_in_inventory(
+            name="test product", quantity=100, restock=50,
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50)
+        resp = self.app.post(
+            "/inventory", json=test_update.serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # update the product in inventory
+        new_product_in_inventory = resp.get_json()
+        logging.debug(new_product_in_inventory)
+        new_product_in_inventory["supplier_name"] = "unknown"
+        resp = self.app.put(
+            "/inventory/{}".format(new_product_in_inventory["product_in_inventory_id"]),
+            json=new_product_in_inventory,
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_product_in_inventory = resp.get_json()
+        self.assertEqual(updated_product_in_inventory["supplier_name"], "unknown")
+
+    def test_get_inventory_list(self):
         """ Get a list of Inventories """
         self._create_inventories(5)
         resp = self.app.get("/inventory")

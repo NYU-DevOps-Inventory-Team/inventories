@@ -139,8 +139,8 @@ def create_product_in_inventory():
     product_in_inventory.create()
     message = product_in_inventory.serialize()
     # location_url = url_for("get_product_in_inventory",
-    #                       product_in_inventory=product_in_inventory.product_in_inventory_id,
-    #                       _external=True)
+    #                        product_in_inventory=product_in_inventory.product_in_inventory_id,
+    #                        _external=True)
     location_url = "not implemented"
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
@@ -158,12 +158,48 @@ def list_inventories():
 
     app.logger.info("Returning %d pets", len(results))
     return make_response(jsonify(results),status.HTTP_200_OK)
-  
+
+
+######################################################################
+# RETRIEVE A PRODUCT IN INVENTORY
+######################################################################
+@app.route("/inventory/<int:product_in_inventory_id>", methods=["GET"])
+def get_product_in_inventory(product_in_inventory_id):
+    """
+    Retrieve a single product in inventory
+    This endpoint will return a product in inventory based on it's id
+    """
+    app.logger.info("Request for product in inventory with id: %s", product_in_inventory_id)
+    product_in_inventory = InventoryModel.find(product_in_inventory_id)
+    if not product_in_inventory:
+        raise NotFound("Product in inventory with id '{}' was not found.".format(product_in_inventory_id))
+    return make_response(jsonify(product_in_inventory.serialize()), status.HTTP_200_OK)
+
+
+######################################################################
+# UPDATE AN EXISTING PRODUCT IN INVENTORY
+######################################################################
+@app.route("/inventory/<int:inventory_id>", methods=["PUT"])
+def update_product_in_inventory(inventory_id):
+    """
+    Update a Product In Inventory
+
+    This endpoint will update a Product In Inventory based the body that is posted
+    """
+    app.logger.info("Request to update Product In Inventory with id: %s", inventory_id)
+    check_content_type("application/json")
+    product_in_inventory = InventoryModel.find(inventory_id)
+    if not product_in_inventory:
+        raise NotFound("Product In Inventory with id '{}' was not found.".format(inventory_id))
+    product_in_inventory.deserialize(request.get_json())
+    product_in_inventory.product_in_inventory_id = inventory_id
+    product_in_inventory.save()
+    return make_response(jsonify(product_in_inventory.serialize()), status.HTTP_200_OK)
+
+
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
-
-
 def init_db():
     """ Initialies the SQLAlchemy app """
     global app
