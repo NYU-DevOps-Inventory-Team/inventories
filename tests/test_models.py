@@ -158,9 +158,12 @@ class TestInventoryModel(unittest.TestCase):
     
     def test_delete_a_product_in_inventory(self):
         """ Delete a Product in Inventory """
-        product_in_inventory_id = InventoryModel()
-        product_in_inventory_id.create()
+        product_in_inventory = _test_create_product_in_inventory(
+            name="test product", quantity=100, restock_threshold=50,
+            supplier_name="test supplier", supplier_id=123,
+            unit_price=12.50) 
+        product_in_inventory.create()
         self.assertEqual(len(InventoryModel.all()), 1)
         # delete the product in inventory and make sure it isn't in the database
-        product_in_inventory_id.delete()
+        product_in_inventory.delete()
         self.assertEqual(len(InventoryModel.all()), 0)

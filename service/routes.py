@@ -200,14 +200,14 @@ def update_product_in_inventory(inventory_id):
 ######################################################################
 # DELETE A PET
 ######################################################################
-@app.route("/pets/<int:pet_id>", methods=["DELETE"])
+@app.route("/inventory/<int:product_in_inventory_id>", methods=["DELETE"])
 def delete_product_in_inventory(product_in_inventory_id):
     """
     Delete a Product in Inventory
     This endpoint will delete a Product in Inventory based the id specified in the path
     """
-    app.logger.info("Request to delete pet with id: %s", product_in_inventory_id)
-    product_in_inventory = Pet.find(product_in_inventory_id)
+    app.logger.info("Request to delete product in inventory with id: %s", product_in_inventory_id)
+    product_in_inventory = InventoryModel.find(product_in_inventory_id)
     if product_in_inventory:
         product_in_inventory.delete()
     return make_response("", status.HTTP_204_NO_CONTENT)
