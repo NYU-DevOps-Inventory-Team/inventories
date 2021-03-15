@@ -147,6 +147,21 @@ def create_product_in_inventory():
 
 
 ######################################################################
+# LIST ALL INVENTORIES
+######################################################################
+@app.route("/inventory", methods=["GET"])
+def list_products_in_inventory():
+    """ Returns all of the Inventory """
+    app.logger.info("Request for inventory list of all products")
+
+    all_products_in_inventory = InventoryModel.all()
+    results = [inventory.serialize() for inventory in all_products_in_inventory]
+
+    app.logger.info("Returning %d products in inventory", len(results))
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+
+######################################################################
 # RETRIEVE A PRODUCT IN INVENTORY
 ######################################################################
 @app.route("/inventory/<int:product_in_inventory_id>", methods=["GET"])
