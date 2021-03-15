@@ -106,8 +106,9 @@ class TestInventoryServer(TestCase):
     def test_get_product_in_inventory(self):
         """ Get a single Product in Inventory """
         # get the id of the product in inventory
-        test_product_in_inventory =_create_test_product_in_inventory(name="test product1", quantity=100, restock=50,
-                                                   supplier_name="test supplier1", supplier_id=123, unit_price=12.50)
+        test_product_in_inventory = _create_test_product_in_inventory(name="test product1", quantity=100, restock=50,
+                                                                      supplier_name="test supplier1", supplier_id=123,
+                                                                      unit_price=12.50)
         test_product_in_inventory.create()
         resp = self.app.get(
             "/inventory/{}".format(test_product_in_inventory.product_in_inventory_id), content_type="application/json"
