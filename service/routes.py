@@ -138,14 +138,27 @@ def create_product_in_inventory():
     product_in_inventory.deserialize(request.get_json())
     product_in_inventory.create()
     message = product_in_inventory.serialize()
-    location_url = url_for("get_product_in_inventory",
-                           product_in_inventory=product_in_inventory.product_in_inventory_id,
-                           _external=True)
+    # location_url = url_for("get_product_in_inventory",
+    #                       product_in_inventory=product_in_inventory.product_in_inventory_id,
+    #                       _external=True)
     location_url = "not implemented"
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
 
+######################################################################
+# LIST ALL INVENTORIES
+######################################################################
+@app.route("/inventory", methods=["GET"])
+def list_inventories():
+    """ Returns all of the Inventory """
+    app.logger.info("Request for inventory list")
 
+    inventories = InventoryModel.all()
+    results = [inventory.serialize()for inventory in inventories]
+
+    app.logger.info("Returning %d pets", len(results))
+    return make_response(jsonify(results),status.HTTP_200_OK)
+  
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
