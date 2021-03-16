@@ -4,7 +4,6 @@ Global Configuration for Application
 import os
 
 # Get configuration from environment
-# TODO change to point to our db
 DATABASE_URI = os.getenv("DATABASE_URI", "sqlite:///../development.db")
 
 # Configure SQLAlchemy

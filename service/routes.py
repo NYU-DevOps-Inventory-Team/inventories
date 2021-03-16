@@ -137,10 +137,9 @@ def create_product_in_inventory():
     product_in_inventory.deserialize(request.get_json())
     product_in_inventory.create()
     message = product_in_inventory.serialize()
-    # location_url = url_for("get_product_in_inventory",
-    #                        product_in_inventory=product_in_inventory.product_in_inventory_id,
-    #                        _external=True)
-    location_url = "not implemented"
+    location_url = url_for("get_product_in_inventory",
+                           product_in_inventory_id=product_in_inventory.product_in_inventory_id,
+                           _external=True)
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
 
@@ -198,7 +197,7 @@ def update_product_in_inventory(inventory_id):
 
 
 ######################################################################
-# DELETE A PET
+# DELETE A PRODUCT IN INVENTORY
 ######################################################################
 @app.route("/inventory/<int:product_in_inventory_id>", methods=["DELETE"])
 def delete_product_in_inventory(product_in_inventory_id):
