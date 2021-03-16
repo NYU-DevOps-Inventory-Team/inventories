@@ -8,7 +8,6 @@ Test cases can be run with the following:
 import os
 import logging
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
 from flask_api import status  # HTTP Status Codes
 from service.models import db, InventoryModel
 from service.routes import app, init_db
@@ -109,18 +108,18 @@ class TestInventoryServer(TestCase):
             new_product_in_inventory["restock_threshold"], test_product_in_inventory.restock_threshold,
             "Restock Threshold does not match"
         )
-        # # Check that the location header was correct
-        # resp = self.app.get(location, content_type="application/json")
-        # self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        # new_product_in_inventory = resp.get_json()
-        # self.assertEqual(new_product_in_inventory["name"], test_product_in_inventory.name, "Names do not match")
-        # self.assertEqual(
-        #     new_product_in_inventory["quantity"], test_product_in_inventory.quantity, "Quantities do not match"
-        # )
-        # self.assertEqual(
-        #     new_product_in_inventory["restock_threshold"], test_product_in_inventory.restock_threshold,
-        #     "Restock Threshold does not match"
-        # )
+        # Check that the location header was correct
+        resp = self.app.get(location, content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_product_in_inventory = resp.get_json()
+        self.assertEqual(new_product_in_inventory["name"], test_product_in_inventory.name, "Names do not match")
+        self.assertEqual(
+            new_product_in_inventory["quantity"], test_product_in_inventory.quantity, "Quantities do not match"
+        )
+        self.assertEqual(
+            new_product_in_inventory["restock_threshold"], test_product_in_inventory.restock_threshold,
+            "Restock Threshold does not match"
+        )
 
     def test_get_product_in_inventory(self):
         """ Get a single Product in Inventory """
@@ -137,7 +136,7 @@ class TestInventoryServer(TestCase):
         self.assertEqual(data["name"], test_product_in_inventory.name)
 
     def test_get_product_in_inventory_not_found(self):
-        """ Get a Product in inventory thats not found """
+        """ Get a Product in inventory that's not found """
         resp = self.app.get("/inventory/0")
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -186,3 +185,31 @@ class TestInventoryServer(TestCase):
             "/inventory/{}".format(test_product_in_inventory.product_in_inventory_id), content_type="application/json"
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_bad_request(self):
+        """ Send wrong media type """
+        resp = self.app.post(
+            "/inventory",
+            json={"name": "not enough data"},
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_unsupported_media_type(self):
+        """ Send wrong media type """
+        inventory_item = self._create_products_in_inventory(1)[0]
+        resp = self.app.post(
+            "/inventory",
+            json=inventory_item.serialize(),
+            content_type="test/html"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_method_not_allowed(self):
+        """ Make an illegal method call """
+        resp = self.app.put(
+            "/inventory",
+            json={"not": "today"},
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
