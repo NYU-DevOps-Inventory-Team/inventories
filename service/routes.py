@@ -198,7 +198,7 @@ def update_product_in_inventory(inventory_id):
 
 
 ######################################################################
-# DELETE A PET
+# DELETE A PRODUCT IN INVENTORY
 ######################################################################
 @app.route("/inventory/<int:product_in_inventory_id>", methods=["DELETE"])
 def delete_product_in_inventory(product_in_inventory_id):

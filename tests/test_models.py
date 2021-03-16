@@ -107,7 +107,7 @@ class TestInventoryModel(unittest.TestCase):
         logging.debug(products_in_inventory)
         # make sure they got saved
         self.assertEqual(len(InventoryModel.all()), 3)
-        # find the 2nd pet in the list
+        # find the 2nd product in inventory in the list
         found_product_in_inventory = InventoryModel.find(products_in_inventory[1].product_in_inventory_id)
         self.assertIsNot(found_product_in_inventory, None)
         self.assertEqual(found_product_in_inventory.product_in_inventory_id,
@@ -137,7 +137,7 @@ class TestInventoryModel(unittest.TestCase):
         product_in_inventory = _test_create_product_in_inventory(
             name="test product", quantity=100, restock_threshold=50,
             supplier_name="test supplier", supplier_id=123,
-            unit_price=12.50)  # TODO was this the right way to substitute his pet factory? I took what you did above
+            unit_price=12.50)  
         logging.debug(product_in_inventory)
         product_in_inventory.create()
         logging.debug(product_in_inventory)
@@ -167,3 +167,54 @@ class TestInventoryModel(unittest.TestCase):
         # delete the product in inventory and make sure it isn't in the database
         product_in_inventory.delete()
         self.assertEqual(len(InventoryModel.all()), 0)
+
+
+    def test_serialize_a_product_in_inventory(self):
+        """ Test serialization of a Product in Inventory """
+        product_in_inventory =_test_create_product_in_inventory(name="test product1", quantity=100, restock_threshold=50,
+                                              supplier_name="test supplier1", supplier_id=123, unit_price=12.50)        
+        data = product_in_inventory.serialize()
+        self.assertNotEqual(data, None)
+        self.assertIn("product_in_inventory_id", data)
+        self.assertEqual(data["product_in_inventory_id"], product_in_inventory.product_in_inventory_id)
+        self.assertIn("name", data)
+        self.assertEqual(data["name"], product_in_inventory.name)
+        self.assertIn("quantity", data)
+        self.assertEqual(data["quantity"], product_in_inventory.quantity)
+        self.assertIn("supplier_name", data)
+        self.assertEqual(data["supplier_name"], product_in_inventory.supplier_name)
+        self.assertIn("supplier_id", data)
+        self.assertEqual(data["supplier_id"], product_in_inventory.supplier_id)
+
+    def test_deserialize_a_product_in_inventory(self):
+        """ Test deserialization of a Product in Inventory """
+        data = {
+            "product_in_inventory_id": 1,
+            "name": "test product1",
+            "quantity": 100,
+            "restock_threshold": 200,
+            "supplier_id": 123,
+            "supplier_name": "supplier test",
+            "unit_price": 12.50,
+        }
+        product_in_inventory = InventoryModel()
+        product_in_inventory.deserialize(data)
+        self.assertNotEqual(product_in_inventory, None)
+        self.assertEqual(product_in_inventory.product_in_inventory_id, None)
+        self.assertEqual(product_in_inventory.name, "test product1")
+        self.assertEqual(product_in_inventory.quantity, 100)
+        self.assertEqual(product_in_inventory.supplier_id, 123)
+        self.assertEqual(product_in_inventory.unit_price, 12.50)
+
+
+    def test_deserialize_missing_data(self):
+        """ Test deserialization of a Product in Inventory """
+        data = {"id": 1, "name": "test product2", "quantity": 100}
+        product_in_inventory = InventoryModel()
+        self.assertRaises(DataValidationError, product_in_inventory.deserialize, data)
+
+    def test_deserialize_bad_data(self):
+        """ Test deserialization of bad data """
+        data = "this is not a dictionary"
+        product_in_inventory = InventoryModel()
+        self.assertRaises(DataValidationError, product_in_inventory.deserialize, data)
