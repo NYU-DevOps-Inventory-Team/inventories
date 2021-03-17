@@ -1,14 +1,14 @@
 """
 Inventory Service
-Maintain an accurate count of products in inventory and their attributes
+Maintain an accurate count of inventory items and their attributes
 
 Paths:
 ------
-GET /inventory - Returns a list all of the products in inventory
-GET /inventory/{id} - Returns a product in inventory with a given product id number
-POST /inventory - creates a new product in inventory record in the database
-PUT /inventory/{id} - updates a product in inventory record in the database
-DELETE /inventory/{id} - deletes a product in invetory record in the database
+GET /inventory - Returns a list all of the inventory items
+GET /inventory/{inventory_id} - Returns an inventory item with a given product id number
+POST /inventory - creates a new inventory item record in the database
+PUT /inventory/{inventory_id} - updates an inventory item record in the database
+DELETE /inventory/{inventory_id} - deletes a product in inventory record in the database
 """
 
 import os
@@ -22,14 +22,139 @@ from flask_api import status  # HTTP Status Codes
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.exceptions import NotFound
 
-from service.models import InventoryModel, DataValidationError
+from service.models import InventoryItem, DataValidationError
 
 # Import Flask application
 from . import app
 
 
 ######################################################################
-# Error Handlers
+# GET INDEX
+######################################################################
+@app.route("/")
+def index():
+    """ Root URL response """
+    return (
+        jsonify(
+            name="Inventory REST API Service",
+            version="1.0",
+            paths=url_for("list_inventory_items", _external=True),
+        ),
+        status.HTTP_200_OK,
+    )
+
+
+######################################################################
+# ADD A NEW INVENTORY ITEM
+######################################################################
+@app.route("/inventory", methods=["POST"])
+def create_new_inventory_item():
+    """
+    Creates a new inventory item
+    This endpoint will create an inventory item based the data in the body that is posted
+    """
+    app.logger.info("Request to create new inventory item")
+    check_content_type("application/json")
+    inventory_item = InventoryItem()
+    inventory_item.deserialize(request.get_json())
+    inventory_item.create()
+    message = inventory_item.serialize()
+    location_url = url_for(
+        "get_inventory_item",
+        inventory_id=inventory_item.inventory_id,
+        _external=True
+    )
+    return make_response(
+        jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+    )
+
+
+######################################################################
+# LIST ALL INVENTORIES
+######################################################################
+@app.route("/inventory", methods=["GET"])
+def list_inventory_items():
+    """ Returns all of the Inventory """
+    app.logger.info("Request for inventory list of all products")
+
+    all_inventory_items = InventoryItem.all()
+    results = [inventory.serialize() for inventory in all_inventory_items]
+
+    app.logger.info("Returning %d inventory items", len(results))
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+
+######################################################################
+# RETRIEVE AN INVENTORY ITEM
+######################################################################
+@app.route("/inventory/<int:inventory_id>", methods=["GET"])
+def get_inventory_item(inventory_id):
+    """
+    Retrieve a single inventory item
+    This endpoint will return an inventory item based on it's id
+    """
+    app.logger.info("Request for inventory item with id: %s", inventory_id)
+    inventory_item = InventoryItem.find(inventory_id)
+    if not inventory_item:
+        raise NotFound("Inventory item with inventory id '{}' was not found.".format(inventory_id))
+    return make_response(jsonify(inventory_item.serialize()), status.HTTP_200_OK)
+
+
+######################################################################
+# UPDATE AN EXISTING INVENTORY ITEM
+######################################################################
+@app.route("/inventory/<int:inventory_id>", methods=["PUT"])
+def update_inventory_item(inventory_id):
+    """
+    Update an inventory item
+    This endpoint will update an inventory item based the body that is posted
+    """
+    app.logger.info("Request to update Inventory item with id: %s", inventory_id)
+    check_content_type("application/json")
+    inventory_item = InventoryItem.find(inventory_id)
+    if not inventory_item:
+        raise NotFound("Inventory item with id '{}' was not found.".format(inventory_id))
+    inventory_item.deserialize(request.get_json())
+    inventory_item.inventory_id = inventory_id
+    inventory_item.save()
+    return make_response(jsonify(inventory_item.serialize()), status.HTTP_200_OK)
+
+
+######################################################################
+# DELETE AN INVENTORY ITEM
+######################################################################
+@app.route("/inventory/<int:inventory_id>", methods=["DELETE"])
+def delete_inventory_item(inventory_id):
+    """
+    Delete an inventory item
+    This endpoint will delete an inventory item based the inventory id specified in the path
+    """
+    app.logger.info("Request to delete inventory item with id: %s", inventory_id)
+    inventory_item = InventoryItem.find(inventory_id)
+    if inventory_item:
+        inventory_item.delete()
+    return make_response("", status.HTTP_204_NO_CONTENT)
+
+
+######################################################################
+#  U T I L I T Y   F U N C T I O N S
+######################################################################
+def init_db():
+    """ Initializes the SQLAlchemy app """
+    global app
+    InventoryItem.init_db(app)
+
+
+def check_content_type(content_type):
+    """ Checks that the media type is correct """
+    if request.headers["Content-Type"] == content_type:
+        return
+    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    abort(415, "Content-Type must be {}".format(content_type))
+
+
+######################################################################
+# ERROR HANDLERS
 ######################################################################
 
 @app.errorhandler(DataValidationError)
@@ -40,7 +165,7 @@ def request_validation_error(error):
 
 @app.errorhandler(status.HTTP_400_BAD_REQUEST)
 def bad_request(error):
-    """ Handles bad reuests with 400_BAD_REQUEST """
+    """ Handles bad requests with 400_BAD_REQUEST """
     message = str(error)
     app.logger.warning(message)
     return (
@@ -64,7 +189,7 @@ def not_found(error):
 
 @app.errorhandler(status.HTTP_405_METHOD_NOT_ALLOWED)
 def method_not_supported(error):
-    """ Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED """
+    """ Handles unsupported HTTP methods with 405_METHOD_NOT_SUPPORTED """
     message = str(error)
     app.logger.warning(message)
     return (
@@ -79,7 +204,7 @@ def method_not_supported(error):
 
 @app.errorhandler(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 def mediatype_not_supported(error):
-    """ Handles unsuppoted media requests with 415_UNSUPPORTED_MEDIA_TYPE """
+    """ Handles unsupported media requests with 415_UNSUPPORTED_MEDIA_TYPE """
     message = str(error)
     app.logger.warning(message)
     return (
@@ -105,124 +230,3 @@ def internal_server_error(error):
         ),
         status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
-
-
-######################################################################
-# GET INDEX
-######################################################################
-@app.route("/")
-def index():
-    """ Root URL response """
-    return (
-        jsonify(
-            name="Inventory REST API Service",
-            version="1.0",
-            # paths=url_for("list_inventory", _external=True),
-        ),
-        status.HTTP_200_OK,
-    )
-
-######################################################################
-# ADD A NEW PRODUCT IN INVENTORY
-######################################################################
-@app.route("/inventory", methods=["POST"])
-def create_product_in_inventory():
-    """
-    Creates a new product in inventory
-    This endpoint will create a product in inventory based the data in the body that is posted
-    """
-    app.logger.info("Request to create a product in inventory")
-    check_content_type("application/json")
-    product_in_inventory = InventoryModel()
-    product_in_inventory.deserialize(request.get_json())
-    product_in_inventory.create()
-    message = product_in_inventory.serialize()
-    location_url = url_for("get_product_in_inventory",
-                           product_in_inventory_id=product_in_inventory.product_in_inventory_id,
-                           _external=True)
-    return make_response(
-        jsonify(message), status.HTTP_201_CREATED, {"Location": location_url})
-
-
-######################################################################
-# LIST ALL INVENTORIES
-######################################################################
-@app.route("/inventory", methods=["GET"])
-def list_products_in_inventory():
-    """ Returns all of the Inventory """
-    app.logger.info("Request for inventory list of all products")
-
-    all_products_in_inventory = InventoryModel.all()
-    results = [inventory.serialize() for inventory in all_products_in_inventory]
-
-    app.logger.info("Returning %d products in inventory", len(results))
-    return make_response(jsonify(results), status.HTTP_200_OK)
-
-
-######################################################################
-# RETRIEVE A PRODUCT IN INVENTORY
-######################################################################
-@app.route("/inventory/<int:product_in_inventory_id>", methods=["GET"])
-def get_product_in_inventory(product_in_inventory_id):
-    """
-    Retrieve a single product in inventory
-    This endpoint will return a product in inventory based on it's id
-    """
-    app.logger.info("Request for product in inventory with id: %s", product_in_inventory_id)
-    product_in_inventory = InventoryModel.find(product_in_inventory_id)
-    if not product_in_inventory:
-        raise NotFound("Product in inventory with id '{}' was not found.".format(product_in_inventory_id))
-    return make_response(jsonify(product_in_inventory.serialize()), status.HTTP_200_OK)
-
-
-######################################################################
-# UPDATE AN EXISTING PRODUCT IN INVENTORY
-######################################################################
-@app.route("/inventory/<int:inventory_id>", methods=["PUT"])
-def update_product_in_inventory(inventory_id):
-    """
-    Update a Product In Inventory
-
-    This endpoint will update a Product In Inventory based the body that is posted
-    """
-    app.logger.info("Request to update Product In Inventory with id: %s", inventory_id)
-    check_content_type("application/json")
-    product_in_inventory = InventoryModel.find(inventory_id)
-    if not product_in_inventory:
-        raise NotFound("Product In Inventory with id '{}' was not found.".format(inventory_id))
-    product_in_inventory.deserialize(request.get_json())
-    product_in_inventory.product_in_inventory_id = inventory_id
-    product_in_inventory.save()
-    return make_response(jsonify(product_in_inventory.serialize()), status.HTTP_200_OK)
-
-
-######################################################################
-# DELETE A PRODUCT IN INVENTORY
-######################################################################
-@app.route("/inventory/<int:product_in_inventory_id>", methods=["DELETE"])
-def delete_product_in_inventory(product_in_inventory_id):
-    """
-    Delete a Product in Inventory
-    This endpoint will delete a Product in Inventory based the id specified in the path
-    """
-    app.logger.info("Request to delete product in inventory with id: %s", product_in_inventory_id)
-    product_in_inventory = InventoryModel.find(product_in_inventory_id)
-    if product_in_inventory:
-        product_in_inventory.delete()
-    return make_response("", status.HTTP_204_NO_CONTENT)
-
-
-######################################################################
-#  U T I L I T Y   F U N C T I O N S
-######################################################################
-def init_db():
-    """ Initialies the SQLAlchemy app """
-    global app
-    InventoryModel.init_db(app)
-
-def check_content_type(content_type):
-    """ Checks that the media type is correct """
-    if request.headers["Content-Type"] == content_type:
-        return
-    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
-    abort(415, "Content-Type must be {}".format(content_type))
