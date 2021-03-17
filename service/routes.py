@@ -5,10 +5,10 @@ Maintain an accurate count of inventory items and their attributes
 Paths:
 ------
 GET /inventory - Returns a list all of the inventory items
-GET /inventory/{product_id} - Returns an inventory item with a given product id number
+GET /inventory/{inventory_id} - Returns an inventory item with a given product id number
 POST /inventory - creates a new inventory item record in the database
-PUT /inventory/{product_id} - updates an inventory item record in the database
-DELETE /inventory/{product_id} - deletes a product in invetory record in the database
+PUT /inventory/{inventory_id} - updates an inventory item record in the database
+DELETE /inventory/{inventory_id} - deletes a product in inventory record in the database
 """
 
 import os
@@ -165,7 +165,7 @@ def request_validation_error(error):
 
 @app.errorhandler(status.HTTP_400_BAD_REQUEST)
 def bad_request(error):
-    """ Handles bad reuests with 400_BAD_REQUEST """
+    """ Handles bad requests with 400_BAD_REQUEST """
     message = str(error)
     app.logger.warning(message)
     return (
@@ -189,7 +189,7 @@ def not_found(error):
 
 @app.errorhandler(status.HTTP_405_METHOD_NOT_ALLOWED)
 def method_not_supported(error):
-    """ Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED """
+    """ Handles unsupported HTTP methods with 405_METHOD_NOT_SUPPORTED """
     message = str(error)
     app.logger.warning(message)
     return (
@@ -204,7 +204,7 @@ def method_not_supported(error):
 
 @app.errorhandler(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 def mediatype_not_supported(error):
-    """ Handles unsuppoted media requests with 415_UNSUPPORTED_MEDIA_TYPE """
+    """ Handles unsupported media requests with 415_UNSUPPORTED_MEDIA_TYPE """
     message = str(error)
     app.logger.warning(message)
     return (

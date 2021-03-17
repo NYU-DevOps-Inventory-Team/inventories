@@ -17,7 +17,8 @@ DATABASE_URI = os.getenv(
 )
 
 
-def _create_test_inventory_item(product_id, product_name, quantity, restock_threshold, supplier_name, supplier_id, unit_price):
+def _create_test_inventory_item(product_id, product_name, quantity, restock_threshold, supplier_name, supplier_id,
+                                unit_price):
     """create inventory items in bulk """
     return InventoryItem(
         product_id=product_id,
