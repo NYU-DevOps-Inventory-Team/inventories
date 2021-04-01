@@ -3,6 +3,8 @@ DevOps Inventory Team
 
 This repository contains the inventory service for an e-commerce business. The service is a REST API to maintain an accurate count of products and their attributes.
 
+[![Build Status](https://travis-ci.com/NYU-DevOps-Inventory-Team/inventories.svg?branch=main)](https://travis-ci.com/NYU-DevOps-Inventory-Team/inventories)
+
 **Note:** This repo has a `Vagrantfile` so the easiest way to play with it is to:
 
 ```bash
