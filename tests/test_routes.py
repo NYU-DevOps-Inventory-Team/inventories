@@ -150,6 +150,25 @@ class TestInventoryServer(TestCase):
         for item in data:
             self.assertEqual(item["supplier_name"], desired_supplier_name)
 
+    def test_query_inventory_items_list_by_product_name(self):
+        """ Query Inventory Items by Product Name """
+        test_items = self._create_test_inventory_items(10)
+        desired_product_name = test_items[0].product_name
+        items_with_desired_product_name = [item for item in test_items if item.product_name == desired_product_name]
+
+        # hit the route
+        resp = self.app.get(
+            "/inventory", query_string="product_name={}".format(desired_product_name)
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), len(items_with_desired_product_name))
+
+        # check the data
+        for item in data:
+            self.assertEqual(item["product_name"], desired_product_name)
+
+
     def test_get_inventory_item(self):
         """ Get a single Inventory item """
         # get the id of the inventory item

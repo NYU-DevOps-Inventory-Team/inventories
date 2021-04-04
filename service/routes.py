@@ -84,7 +84,7 @@ def list_inventory_items():
     if supplier_name:
         all_inventory_items = InventoryItem.find_by_supplier_name(supplier_name)
     elif product_name:
-        all_inventory_items = InventoryItem.find_by_name(product_name)
+        all_inventory_items = InventoryItem.find_by_product_name(product_name)
     else:
         all_inventory_items = InventoryItem.all()
 
