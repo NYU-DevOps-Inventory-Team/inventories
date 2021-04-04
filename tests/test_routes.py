@@ -125,28 +125,30 @@ class TestInventoryServer(TestCase):
             "Restock Threshold does not match")
 
     def test_list_inventory_items(self):
-        """ Get a list of inventory items """
+        """ Get a list of inventory items without any filter"""
         self._create_test_inventory_items(5)
         resp = self.app.get("/inventory")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(len(data), 5)
 
-    # def test_query_inventory_items_list_by_supplier_name(self):
-     #   """ Query Inventory Items by Supplier Name """
-      #  test_items = self._create_test_inventory_items(10)
-      #  test_find_by_supplier_name = InventoryItem[0].supplier_name
-      #  supplier_name_InventoryItems = [Inventory for Inventory in InventoryItem if inventory.supplier_name == test_find_by_supplier_name]
-      #  resp = self.app.get(
-      #      "/inventory", query_string="supplier_name={}".format(quote_plus(test_find_by_supplier_name))
-      #  )
-      #  self.assertEqual(resp.status_code, status.HTTP_200_OK)
-      #  data = resp.get_json()
-      #  self.assertEqual(len(data), len(supplier_name_InventoryItems))
-        # check the data just to be sure
-       # for InventoryItem in data:
-       #     self.assertEqual(pet["supplier_name"], test_find_by_supplier_name)
+    def test_query_inventory_items_list_by_supplier_name(self):
+        """ Query Inventory Items by Supplier Name """
+        test_items = self._create_test_inventory_items(10)
+        desired_supplier_name = test_items[0].supplier_name
+        items_with_desired_supplier_name = [item for item in test_items if item.supplier_name == desired_supplier_name]
 
+        # hit the route
+        resp = self.app.get(
+            "/inventory", query_string="supplier_name={}".format(desired_supplier_name)
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), len(items_with_desired_supplier_name))
+
+        # check the data
+        for item in data:
+            self.assertEqual(item["supplier_name"], desired_supplier_name)
 
     def test_get_inventory_item(self):
         """ Get a single Inventory item """
