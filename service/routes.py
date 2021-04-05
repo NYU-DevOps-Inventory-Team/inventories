@@ -146,9 +146,9 @@ def disable_supplier(supplier_id):
     This endpoint will disable an inventory item based the supplier id specified in the path
     """
     app.logger.info("Request to disable inventory item with supplier id: %s", supplier_id)
- #   inventory_item = InventoryItem.find(supplier_id)
- #   if inventory_item:
- #      inventory_item.delete()
+    #   inventory_item = InventoryItem.find(supplier_id)
+    #   if inventory_item:
+    #      inventory_item.delete()
     return make_response("", status.HTTP_204_NO_CONTENT)
 
 

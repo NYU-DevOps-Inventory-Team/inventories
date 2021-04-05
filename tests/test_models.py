@@ -170,6 +170,7 @@ class TestInventoryItem(unittest.TestCase):
             "restock_threshold": 200,
             "supplier_id": 123,
             "supplier_name": "supplier test",
+            "supplier_status": "enabled",
             "unit_price": 12.50,
         }
         inventory_item = InventoryItem()

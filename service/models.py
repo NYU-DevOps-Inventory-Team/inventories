@@ -32,8 +32,8 @@ class InventoryItem(db.Model):
     supplier_id = db.Column(db.Integer, nullable=False)
     supplier_name = db.Column(db.String(63))
     unit_price = db.Column(db.Float, nullable=False)
+    # todo: this should probably be a enumerable
     supplier_status = db.Column(db.String(63), nullable=False)
-
 
     def __repr__(self):
         return "<InventoryItem %r id=[%s]>" % (self.product_name, self.inventory_id)

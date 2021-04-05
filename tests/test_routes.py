@@ -18,7 +18,7 @@ DATABASE_URI = os.getenv(
 
 
 def _create_test_inventory_item(product_id, product_name, quantity, restock_threshold, supplier_name, supplier_id,
-                                unit_price):
+                                unit_price, supplier_status):
     """create inventory items in bulk """
     return InventoryItem(
         product_id=product_id,
@@ -27,6 +27,7 @@ def _create_test_inventory_item(product_id, product_name, quantity, restock_thre
         restock_threshold=restock_threshold,
         supplier_name=supplier_name,
         supplier_id=supplier_id,
+        supplier_status=supplier_status,
         unit_price=unit_price
     )
 
@@ -62,7 +63,7 @@ class TestInventoryServer(TestCase):
         for _ in range(count):
             test_item = _create_test_inventory_item(
                 product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-                supplier_name="test supplier", supplier_id=123, unit_price=12.50)
+                supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled")
 
             # TODO: this is bad practice--hopefully the factory stuff will resolve. you should not depend on a different
             #  route working when testing some other route. in the case of the Create endpoint breaking, every other
@@ -93,7 +94,7 @@ class TestInventoryServer(TestCase):
         """ Create a new Inventory item """
         test_item = _create_test_inventory_item(
             product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-            supplier_name="test supplier", supplier_id=123, unit_price=12.50
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
         )
         logging.debug(test_item)
         resp = self.app.post(
@@ -137,7 +138,7 @@ class TestInventoryServer(TestCase):
         # get the id of the inventory item
         test_item = _create_test_inventory_item(
             product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-            supplier_name="test supplier", supplier_id=123, unit_price=12.50
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
         )
         test_item.create()
         resp = self.app.get(
@@ -157,7 +158,7 @@ class TestInventoryServer(TestCase):
         # create a product to update
         test_item = _create_test_inventory_item(
             product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-            supplier_name="test supplier", supplier_id=123, unit_price=12.50
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
         )
         resp = self.app.post(
             "/inventory", json=test_item.serialize(), content_type="application/json"
