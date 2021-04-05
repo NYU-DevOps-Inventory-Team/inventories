@@ -147,17 +147,21 @@ def disable_supplier(supplier_id):
     """
     app.logger.info("Request to disable inventory item with supplier id: %s", supplier_id)
 
-    # retrieve inventory item from DB based on supplier id
-    inventory_item = InventoryItem.find(supplier_id)
-    if not inventory_item:
-        raise NotFound("Inventory item with id '{}' was not found.".format(supplier_id))
+    # retrieve inventory items from DB based on supplier id
+    inventory_items = InventoryItem.find_by_supplier_id(supplier_id)
+    if not inventory_items or inventory_items.count() == 0:
+        raise NotFound("Inventory items with supplier id '{}' were not found.".format(supplier_id))
 
-    # toggle supplier status attribute on item
-    inventory_item.supplier_status = "disabled" if inventory_item.supplier_status == "enabled" else "disabled"
+    results = []
+    for item in inventory_items:
+        # toggle supplier status attribute on item
+        item.supplier_status = "disabled" if item.supplier_status == "enabled" else "enabled"
 
-    # save item in DB and return new item
-    inventory_item.save()
-    return make_response(jsonify(inventory_item.serialize()), status.HTTP_200_OK)
+        # save item in DB and return new item
+        item.save()
+        results.append(item.serialize())
+
+    return make_response(jsonify(results), status.HTTP_200_OK)
 
 
 ######################################################################

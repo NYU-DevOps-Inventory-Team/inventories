@@ -192,33 +192,75 @@ class TestInventoryServer(TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_disable_inventory_item(self):
+        """ disable an existing product inventory by supplier id"""
+        # create a product to update
+        test_item = _create_test_inventory_item(
+            product_id=123, product_name="test product", quantity=100, restock_threshold=50,
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
+        )
+        test_item.create()
+        supplier_id = test_item.supplier_id
+
+        # update the inventory item
+        resp = self.app.put(
+            "/inventory/supplier/{}".format(supplier_id)
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_items = resp.get_json()
+        for item in updated_items:
+            self.assertEqual(item["supplier_status"], "disabled")
+
+    def test_enable_inventory_item(self):
+        """ enable an existing product inventory by supplier id"""
+        # create a product to update
+        test_item = _create_test_inventory_item(
+            product_id=123, product_name="test product", quantity=100, restock_threshold=50,
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="disabled"
+        )
+        test_item.create()
+        supplier_id = test_item.supplier_id
+
+        # update the inventory item
+        resp = self.app.put(
+            "/inventory/supplier/{}".format(supplier_id)
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_items = resp.get_json()
+        for item in updated_items:
+            self.assertEqual(item["supplier_status"], "enabled")
+
     ######################################################################
     #  BAD ROUTE TESTS
     ######################################################################
-    def test_bad_request(self):
-        """ Send wrong media type """
-        resp = self.app.post(
-            "/inventory",
-            json={"product_name": "not enough data"},
-            content_type="application/json"
-        )
-        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_unsupported_media_type(self):
-        """ Send wrong media type """
-        test_item = self._create_test_inventory_items(1)[0]
-        resp = self.app.post(
-            "/inventory",
-            json=test_item.serialize(),
-            content_type="test/html"
-        )
-        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    def test_method_not_allowed(self):
-        """ Make an illegal method call """
-        resp = self.app.put(
-            "/inventory",
-            json={"not": "today"},
-            content_type="application/json"
-        )
-        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+def test_bad_request(self):
+    """ Send wrong media type """
+    resp = self.app.post(
+        "/inventory",
+        json={"product_name": "not enough data"},
+        content_type="application/json"
+    )
+    self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+def test_unsupported_media_type(self):
+    """ Send wrong media type """
+    test_item = self._create_test_inventory_items(1)[0]
+    resp = self.app.post(
+        "/inventory",
+        json=test_item.serialize(),
+        content_type="test/html"
+    )
+    self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+
+def test_method_not_allowed(self):
+    """ Make an illegal method call """
+    resp = self.app.put(
+        "/inventory",
+        json={"not": "today"},
+        content_type="application/json"
+    )
+    self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -137,3 +137,14 @@ class InventoryItem(db.Model):
         """
         logger.info("Processing name query for %s ...", product_name)
         return cls.query.filter(cls.product_name == product_name)
+
+
+    @classmethod
+    def find_by_supplier_id(cls, supplier_id):
+        """Returns all InventoryItems with the given supplier_id
+
+        Args:
+            supplier_id (string): the supplier id of the InventoryItems you want to match
+        """
+        logger.info("Processing supplier id query for %s ...", supplier_id)
+        return cls.query.filter(cls.supplier_id == supplier_id)
