@@ -137,6 +137,22 @@ def delete_inventory_item(inventory_id):
 
 
 ######################################################################
+# DISABLE ITEM BY SUPPLIER ID
+######################################################################
+@app.route("/inventory/supplier/<int:supplier_id>", methods=["PUT"])
+def disable_supplier(supplier_id):
+    """
+    Disable inventory item by Supplier ID
+    This endpoint will disable an inventory item based the supplier id specified in the path
+    """
+    app.logger.info("Request to disable inventory item with supplier id: %s", supplier_id)
+ #   inventory_item = InventoryItem.find(supplier_id)
+ #   if inventory_item:
+ #      inventory_item.delete()
+    return make_response("", status.HTTP_204_NO_CONTENT)
+
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 def init_db():

@@ -18,7 +18,7 @@ DATABASE_URI = os.getenv(
 
 
 def _create_test_inventory_item(product_id, product_name, quantity, restock_threshold, supplier_name, supplier_id,
-                                unit_price):
+                                unit_price, supplier_status):
     """create inventory items in bulk """
     return InventoryItem(
         product_id=product_id,
@@ -27,6 +27,7 @@ def _create_test_inventory_item(product_id, product_name, quantity, restock_thre
         restock_threshold=restock_threshold,
         supplier_name=supplier_name,
         supplier_id=supplier_id,
+        supplier_status=supplier_status,
         unit_price=unit_price
     )
 
@@ -60,7 +61,7 @@ class TestInventoryItem(unittest.TestCase):
         for _ in range(count):
             test_item = _create_test_inventory_item(
                 product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-                supplier_name="test supplier", supplier_id=123, unit_price=12.50)
+                supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled")
             test_item.create()
             inventory_items.append(test_item)
         return inventory_items
@@ -74,7 +75,7 @@ class TestInventoryItem(unittest.TestCase):
         self.assertEqual(test_item, [])
         test_item = _create_test_inventory_item(
             product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-            supplier_name="test supplier", supplier_id=123, unit_price=12.50
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
         )
         self.assertTrue(test_item is not None)
         self.assertEqual(test_item.inventory_id, None)
@@ -101,17 +102,17 @@ class TestInventoryItem(unittest.TestCase):
         """ Find an inventory item by Name """
         inventory_items = [
             _create_test_inventory_item(
-                product_id=123, product_name="test product1", quantity=100, restock_threshold=50,
-                supplier_name="test supplier1", supplier_id=123, unit_price=12.50),
+                product_id=123, product_name="test product", quantity=100, restock_threshold=50,
+                supplier_name="test supplier1", supplier_id=123, unit_price=12.50, supplier_status="enabled"),
             _create_test_inventory_item(
                 product_id=123, product_name="test product2", quantity=100, restock_threshold=50,
-                supplier_name="test supplier2", supplier_id=125, unit_price=12.50),
+                supplier_name="test supplier2", supplier_id=125, unit_price=12.50, supplier_status="enabled"),
             _create_test_inventory_item(
                 product_id=123, product_name="test product3", quantity=100, restock_threshold=50,
-                supplier_name="test supplier3", supplier_id=127, unit_price=12.50)]
+                supplier_name="test supplier3", supplier_id=127, unit_price=12.50, supplier_status="enabled")]
         for inventory_item in inventory_items:
             inventory_item.create()
-        found_items = InventoryItem.find_by_name("test product1")
+        found_items = InventoryItem.find_by_name("test product")
         self.assertEqual(found_items[0].inventory_id, inventory_items[0].inventory_id)
         self.assertEqual(found_items[0].product_name, inventory_items[0].product_name)
         self.assertEqual(found_items[0].quantity, inventory_items[0].quantity)
