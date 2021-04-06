@@ -136,7 +136,7 @@ class InventoryItem(db.Model):
 
     @classmethod
     def find_by_supplier_name(cls, supplier_name):
-        """Returns all InventoryItems with the given name
+        """Returns all InventoryItems with the given supplier name
 
         Args:
             supplier_name (string): the name of the InventoryItems you want to match
