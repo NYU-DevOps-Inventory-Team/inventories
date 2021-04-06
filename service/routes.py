@@ -137,6 +137,34 @@ def delete_inventory_item(inventory_id):
 
 
 ######################################################################
+# DISABLE ITEM BY SUPPLIER ID
+######################################################################
+@app.route("/inventory/supplier/<int:supplier_id>", methods=["PUT"])
+def disable_supplier(supplier_id):
+    """
+    Toggle inventory item status to enabled or disabled given Supplier ID
+    This endpoint will enable or disable an inventory item based the supplier id specified in the path
+    """
+    app.logger.info("Request to disable inventory item with supplier id: %s", supplier_id)
+
+    # retrieve inventory items from DB based on supplier id
+    inventory_items = InventoryItem.find_by_supplier_id(supplier_id)
+    if not inventory_items or inventory_items.count() == 0:
+        raise NotFound("Inventory items with supplier id '{}' were not found.".format(supplier_id))
+
+    results = []
+    for item in inventory_items:
+        # toggle supplier status attribute on item
+        item.supplier_status = "disabled" if item.supplier_status == "enabled" else "enabled"
+
+        # save item in DB and return new item
+        item.save()
+        results.append(item.serialize())
+
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 def init_db():

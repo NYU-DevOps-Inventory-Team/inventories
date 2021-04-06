@@ -32,6 +32,8 @@ class InventoryItem(db.Model):
     supplier_id = db.Column(db.Integer, nullable=False)
     supplier_name = db.Column(db.String(63))
     unit_price = db.Column(db.Float, nullable=False)
+    # todo: this should probably be a enumerable
+    supplier_status = db.Column(db.String(63), nullable=False)
 
     def __repr__(self):
         return "<InventoryItem %r id=[%s]>" % (self.product_name, self.inventory_id)
@@ -68,7 +70,8 @@ class InventoryItem(db.Model):
             "restock_threshold": self.restock_threshold,
             "supplier_id": self.supplier_id,
             "supplier_name": self.supplier_name,
-            "unit_price": self.unit_price
+            "unit_price": self.unit_price,
+            "supplier_status": self.supplier_status
         }
 
     def deserialize(self, data):
@@ -86,6 +89,7 @@ class InventoryItem(db.Model):
             self.supplier_id = data["supplier_id"]
             self.supplier_name = data["supplier_name"]
             self.unit_price = data["unit_price"]
+            self.supplier_status = data["supplier_status"]
         except KeyError as error:
             raise DataValidationError(
                 "Invalid InventoryItem: missing " + error.args[0]
@@ -133,3 +137,14 @@ class InventoryItem(db.Model):
         """
         logger.info("Processing name query for %s ...", product_name)
         return cls.query.filter(cls.product_name == product_name)
+
+
+    @classmethod
+    def find_by_supplier_id(cls, supplier_id):
+        """Returns all InventoryItems with the given supplier_id
+
+        Args:
+            supplier_id (string): the supplier id of the InventoryItems you want to match
+        """
+        logger.info("Processing supplier id query for %s ...", supplier_id)
+        return cls.query.filter(cls.supplier_id == supplier_id)

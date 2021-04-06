@@ -9,6 +9,8 @@ import os
 import logging
 from unittest import TestCase
 from flask_api import status  # HTTP Status Codes
+from werkzeug.exceptions import NotFound
+
 from service.models import db, InventoryItem
 from service.routes import app, init_db
 
@@ -18,7 +20,7 @@ DATABASE_URI = os.getenv(
 
 
 def _create_test_inventory_item(product_id, product_name, quantity, restock_threshold, supplier_name, supplier_id,
-                                unit_price):
+                                unit_price, supplier_status):
     """create inventory items in bulk """
     return InventoryItem(
         product_id=product_id,
@@ -27,6 +29,7 @@ def _create_test_inventory_item(product_id, product_name, quantity, restock_thre
         restock_threshold=restock_threshold,
         supplier_name=supplier_name,
         supplier_id=supplier_id,
+        supplier_status=supplier_status,
         unit_price=unit_price
     )
 
@@ -62,7 +65,7 @@ class TestInventoryServer(TestCase):
         for _ in range(count):
             test_item = _create_test_inventory_item(
                 product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-                supplier_name="test supplier", supplier_id=123, unit_price=12.50)
+                supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled")
 
             # TODO: this is bad practice--hopefully the factory stuff will resolve. you should not depend on a different
             #  route working when testing some other route. in the case of the Create endpoint breaking, every other
@@ -93,7 +96,7 @@ class TestInventoryServer(TestCase):
         """ Create a new Inventory item """
         test_item = _create_test_inventory_item(
             product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-            supplier_name="test supplier", supplier_id=123, unit_price=12.50
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
         )
         logging.debug(test_item)
         resp = self.app.post(
@@ -137,7 +140,7 @@ class TestInventoryServer(TestCase):
         # get the id of the inventory item
         test_item = _create_test_inventory_item(
             product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-            supplier_name="test supplier", supplier_id=123, unit_price=12.50
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
         )
         test_item.create()
         resp = self.app.get(
@@ -157,7 +160,7 @@ class TestInventoryServer(TestCase):
         # create a product to update
         test_item = _create_test_inventory_item(
             product_id=123, product_name="test product", quantity=100, restock_threshold=50,
-            supplier_name="test supplier", supplier_id=123, unit_price=12.50
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
         )
         resp = self.app.post(
             "/inventory", json=test_item.serialize(), content_type="application/json"
@@ -177,6 +180,23 @@ class TestInventoryServer(TestCase):
         updated_item = resp.get_json()
         self.assertEqual(updated_item["supplier_name"], "unknown")
 
+    def test_update_no_item_exists(self):
+        """ update an non existing product inventory"""
+        # dont create a product to update
+        test_item = _create_test_inventory_item(
+            product_id=123, product_name="test product", quantity=100, restock_threshold=50,
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
+        )
+
+        # attempt to update the inventory item
+        resp = self.app.put(
+            "/inventory/987",
+            json=test_item.serialize(),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertRaises(NotFound)
+
     def test_delete_inventory_item(self):
         """ Delete an inventory item """
         test_item = self._create_test_inventory_items(1)[0]
@@ -190,6 +210,54 @@ class TestInventoryServer(TestCase):
             "/inventory/{}".format(test_item.inventory_id), content_type="application/json"
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_disable_inventory_item(self):
+        """ disable an existing product inventory by supplier id"""
+        # create a product to update
+        test_item = _create_test_inventory_item(
+            product_id=123, product_name="test product", quantity=100, restock_threshold=50,
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="enabled"
+        )
+        test_item.create()
+        supplier_id = test_item.supplier_id
+
+        # update the inventory item
+        resp = self.app.put(
+            "/inventory/supplier/{}".format(supplier_id)
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_items = resp.get_json()
+        for item in updated_items:
+            self.assertEqual(item["supplier_status"], "disabled")
+
+    def test_enable_inventory_item(self):
+        """ enable an existing product inventory by supplier id"""
+        # create a product to update
+        test_item = _create_test_inventory_item(
+            product_id=123, product_name="test product", quantity=100, restock_threshold=50,
+            supplier_name="test supplier", supplier_id=123, unit_price=12.50, supplier_status="disabled"
+        )
+        test_item.create()
+        supplier_id = test_item.supplier_id
+
+        # update the inventory item
+        resp = self.app.put(
+            "/inventory/supplier/{}".format(supplier_id)
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_items = resp.get_json()
+        for item in updated_items:
+            self.assertEqual(item["supplier_status"], "enabled")
+
+    def test_enable_no_item_exists(self):
+        """ enable an non existing product inventory by supplier id"""
+        # dont create a product to update
+        # update the inventory item
+        resp = self.app.put(
+            "/inventory/supplier/123"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertRaises(NotFound)
 
     ######################################################################
     #  BAD ROUTE TESTS
