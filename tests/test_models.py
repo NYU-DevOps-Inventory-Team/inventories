@@ -98,7 +98,29 @@ class TestInventoryItem(unittest.TestCase):
         self.assertEqual(found_item.product_name, test_items[1].product_name)
         self.assertEqual(found_item.quantity, test_items[1].quantity)
 
-    def test_find_by_name(self):
+    def test_find_by_supplier_name(self):
+        """ Find inventory item by supplier name """
+        inventory_items = [
+            _create_test_inventory_item(
+                product_id=123, product_name="test product1", quantity=100, restock_threshold=50,
+                supplier_name="test supplier1", supplier_id=123, unit_price=12.50, supplier_status="enabled"),
+            _create_test_inventory_item(
+                product_id=123, product_name="test product2", quantity=100, restock_threshold=50,
+                supplier_name="test supplier2", supplier_id=125, unit_price=12.50, supplier_status="enabled"),
+            _create_test_inventory_item(
+                product_id=123, product_name="test product3", quantity=100, restock_threshold=50,
+                supplier_name="test supplier3", supplier_id=127, unit_price=12.50, supplier_status="enabled")]
+        for inventory_item in inventory_items:
+            inventory_item.create()
+        found_items = InventoryItem.find_by_supplier_name("test supplier1")
+        #added this line below
+        self.assertEqual(found_items[0].supplier_id, inventory_items[0].supplier_id)
+        #copied from "find_by_name" test
+        self.assertEqual(found_items[0].inventory_id, inventory_items[0].inventory_id)
+        self.assertEqual(found_items[0].product_name, inventory_items[0].product_name)
+        self.assertEqual(found_items[0].quantity, inventory_items[0].quantity)
+
+    def test_find_by_product_name(self):
         """ Find an inventory item by Name """
         inventory_items = [
             _create_test_inventory_item(
@@ -112,7 +134,7 @@ class TestInventoryItem(unittest.TestCase):
                 supplier_name="test supplier3", supplier_id=127, unit_price=12.50, supplier_status="enabled")]
         for inventory_item in inventory_items:
             inventory_item.create()
-        found_items = InventoryItem.find_by_name("test product")
+        found_items = InventoryItem.find_by_product_name("test product")
         self.assertEqual(found_items[0].inventory_id, inventory_items[0].inventory_id)
         self.assertEqual(found_items[0].product_name, inventory_items[0].product_name)
         self.assertEqual(found_items[0].quantity, inventory_items[0].quantity)

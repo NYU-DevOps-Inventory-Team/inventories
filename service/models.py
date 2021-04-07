@@ -129,7 +129,7 @@ class InventoryItem(db.Model):
         return cls.query.get_or_404(inventory_id)
 
     @classmethod
-    def find_by_name(cls, product_name):
+    def find_by_product_name(cls, product_name):
         """Returns all InventoryItems with the given name
 
         Args:
@@ -138,6 +138,15 @@ class InventoryItem(db.Model):
         logger.info("Processing name query for %s ...", product_name)
         return cls.query.filter(cls.product_name == product_name)
 
+    @classmethod
+    def find_by_supplier_name(cls, supplier_name):
+        """Returns all InventoryItems with the given supplier name
+
+        Args:
+            supplier_name (string): the name of the InventoryItems you want to match
+        """
+        logger.info("Processing name query for %s ...", supplier_name)
+        return cls.query.filter(cls.supplier_name == supplier_name)
 
     @classmethod
     def find_by_supplier_id(cls, supplier_id):

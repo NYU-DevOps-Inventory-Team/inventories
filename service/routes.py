@@ -77,7 +77,20 @@ def list_inventory_items():
     """ Returns all of the Inventory """
     app.logger.info("Request for inventory list of all products")
 
-    all_inventory_items = InventoryItem.all()
+    all_inventory_items = []
+
+    supplier_name = request.args.get("supplier_name")
+    product_name = request.args.get("product_name")
+    supplier_id = request.args.get("supplier_id")
+    if supplier_name:
+        all_inventory_items = InventoryItem.find_by_supplier_name(supplier_name)
+    elif product_name:
+        all_inventory_items = InventoryItem.find_by_product_name(product_name)
+    elif supplier_id:
+        all_inventory_items = InventoryItem.find_by_supplier_id(supplier_id)    
+    else:
+        all_inventory_items = InventoryItem.all()
+
     results = [inventory.serialize() for inventory in all_inventory_items]
 
     app.logger.info("Returning %d inventory items", len(results))
