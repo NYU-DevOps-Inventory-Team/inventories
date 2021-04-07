@@ -81,6 +81,7 @@ def list_inventory_items():
 
     supplier_name = request.args.get("supplier_name")
     product_name = request.args.get("product_name")
+    supplier_id = request.args.get("supplier_id")
     if supplier_name:
         all_inventory_items = InventoryItem.find_by_supplier_name(supplier_name)
     elif product_name:

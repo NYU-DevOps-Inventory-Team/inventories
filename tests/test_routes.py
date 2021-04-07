@@ -168,7 +168,6 @@ class TestInventoryServer(TestCase):
         for item in data:
             self.assertEqual(item["product_name"], desired_product_name)
 
-
     def test_get_inventory_item(self):
         """ Get a single Inventory item """
         # get the id of the inventory item
