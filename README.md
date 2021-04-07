@@ -3,6 +3,9 @@ DevOps Inventory Team
 
 This repository contains the inventory service for an e-commerce business. The service is a REST API to maintain an accurate count of products and their attributes.
 
+[![Build Status](https://travis-ci.com/NYU-DevOps-Inventory-Team/inventories.svg?branch=main)](https://travis-ci.com/NYU-DevOps-Inventory-Team/inventories)
+[![codecov](https://codecov.io/gh/NYU-DevOps-Inventory-Team/inventories/branch/main/graph/badge.svg?token=5NLUQE5NIR)](https://codecov.io/gh/NYU-DevOps-Inventory-Team/inventories)
+
 **Note:** This repo has a `Vagrantfile` so the easiest way to play with it is to:
 
 ```bash
@@ -23,6 +26,7 @@ list_inventory_items            GET          /inventory
 get_inventory_item              GET          /inventory/<inventory_id> 
 update_inventory_item           PUT          /inventory/<inventory_id> 
 delete_inventory_item           DELETE       /inventory/<inventory_id> 
+disable_supplier                PUT          /inventory/supplier/<supplier_id> 
+```
 
-
-The test cases have 96% test coverage and can be run with `nosetests`
+The test cases can be run with `nosetests`
