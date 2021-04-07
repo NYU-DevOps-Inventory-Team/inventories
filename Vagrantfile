@@ -91,7 +91,7 @@ Vagrant.configure(2) do |config|
     echo "You can login with the following command:"
     echo "\n"
     echo "ibmcloud login -a https://cloud.ibm.com --apikey @~/.bluemix/apiKey.json -r us-south"
-    echo "ibmcloud target --cf -o <your_org_here> -s dev"
+    echo "ibmcloud target --cf -o nyu-inventory-service-s21 -s dev"
     echo "\n************************************"
     # Show the GUI URL for Couch DB
     echo "\n"
