@@ -73,6 +73,11 @@ Vagrant.configure(2) do |config|
     config.vm.provision "file", source: "~/.bluemix/apiKey.json", destination: "~/.bluemix/apiKey.json"
   end
 
+      # Copy your IBM Cloud API Key if you have one
+  if File.exists?(File.expand_path("~/.bluemix/apiKey-inventory.json"))
+    config.vm.provision "file", source: "~/.bluemix/apiKey-inventory.json", destination: "~/.bluemix/apiKey.json"
+  end
+
   ######################################################################
   # Setup a Bluemix and Kubernetes environment
   ######################################################################
