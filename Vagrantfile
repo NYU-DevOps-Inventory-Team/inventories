@@ -73,9 +73,9 @@ Vagrant.configure(2) do |config|
     config.vm.provision "file", source: "~/.bluemix/apiKey.json", destination: "~/.bluemix/apiKey.json"
   end
 
-      # Copy your IBM Cloud API Key if you have one
+    # Copy your IBM Cloud API Key if you have one
   if File.exists?(File.expand_path("~/.bluemix/apiKey-inventory.json"))
-    config.vm.provision "file", source: "~/.bluemix/apiKey-inventory.json", destination: "~/.bluemix/apiKey.json"
+    config.vm.provision "file", source: "~/.bluemix/apiKey-inventory.json", destination: "~/.bluemix/apiKey-inventory.json"
   end
 
   ######################################################################
@@ -92,11 +92,11 @@ Vagrant.configure(2) do |config|
     sudo -H -u vagrant sh -c "ibmcloud cf install"
     sudo -H -u vagrant sh -c "echo alias ic=/usr/local/bin/ibmcloud >> ~/.bash_aliases"
     echo "\n************************************"
-    echo "If you have an IBM Cloud API key in ~/.bluemix/apiKey.json"
+    echo "If you have an IBM Cloud API key in ~/.bluemix/apiKey-inventory.json"
     echo "You can login with the following command:"
     echo "\n"
-    echo "ibmcloud login -a https://cloud.ibm.com --apikey @~/.bluemix/apiKey.json -r us-south"
-    echo "ibmcloud target --cf -o nyu-inventory-service-s21 -s dev"
+    echo "ibmcloud login -a https://cloud.ibm.com --apikey @~/.bluemix/apiKey-inventory.json -r us-south"
+    echo "ibmcloud target --cf -o mv2232@stern.nyu.edu -s dev"
     echo "\n************************************"
     # Show the GUI URL for Couch DB
     echo "\n"
