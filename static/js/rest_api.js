@@ -48,19 +48,31 @@ $(function () {
 
     $("#create-btn").click(function () {
 
-        var name = $("#pet_name").val();
-        var category = $("#pet_category").val();
-        var available = $("#pet_available").val() == "true";
+        var product_name = $("#product_name").val();
+        var supplier_name = $("#supplier_name").val();
+        var supplier_id = $("#supplier_id").val();
+        var product_id = $("#product_id").val();
+        var inventory_id = $("#inventory_id").val();
+        var quantity = $("#quantity").val();
+        var unit_price = $("#unit_price").val();
+        var restock_threshold = $("#restock_threshold").val();
+        var supplier_status = $("#supplier_status").val() == "enabled";
 
         var data = {
-            "name": name,
-            "category": category,
-            "available": available
+            "product_name": product_name,
+            "inventory_id": inventory_id,
+            "supplier_name": supplier_name,
+            "supplier_id": supplier_id,
+            "product_id": product_id,
+            "supplier_status": supplier_status,
+            "quantity": quantity,
+            "unit_price": unit_price,
+            "restock_threshold": restock_threshold,
         };
 
         var ajax = $.ajax({
             type: "POST",
-            url: "/pets",
+            url: "/inventory",
             contentType: "application/json",
             data: JSON.stringify(data),
         });
@@ -77,25 +89,38 @@ $(function () {
 
 
     // ****************************************
-    // Update a Pet
+    // Update a Product
     // ****************************************
 
     $("#update-btn").click(function () {
 
-        var pet_id = $("#pet_id").val();
-        var name = $("#pet_name").val();
-        var category = $("#pet_category").val();
-        var available = $("#pet_available").val() == "true";
+
+        var product_name = $("#product_name").val();
+        var supplier_name = $("#supplier_name").val();
+        var supplier_id = $("#supplier_id").val();
+        var product_id = $("#product_id").val();
+        var inventory_id = $("#inventory_id").val();
+        var quantity = $("#quantity").val();
+        var unit_price = $("#unit_price").val();
+        var restock_threshold = $("#restock_threshold").val();
+        var supplier_status = $("#supplier_status").val() == "enabled";
 
         var data = {
-            "name": name,
-            "category": category,
-            "available": available
+            "product_name": product_name,
+            "inventory_id": inventory_id,
+            "supplier_name": supplier_name,
+            "supplier_id": supplier_id,
+            "product_id": product_id,
+            "supplier_status": supplier_status,
+            "quantity": quantity,
+            "unit_price": unit_price,
+            "restock_threshold": restock_threshold,
+
         };
 
         var ajax = $.ajax({
                 type: "PUT",
-                url: "/pets/" + pet_id,
+                url: "/inventories/" + product_id,
                 contentType: "application/json",
                 data: JSON.stringify(data)
             })
@@ -117,11 +142,11 @@ $(function () {
 
     $("#retrieve-btn").click(function () {
 
-        var pet_id = $("#pet_id").val();
+        var product_id = $("#product_id").val();
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/pets/" + pet_id,
+            url: "/inventories/" + product_id,
             contentType: "application/json",
             data: ''
         })
@@ -140,23 +165,23 @@ $(function () {
     });
 
     // ****************************************
-    // Delete a Pet
+    // Delete a Product
     // ****************************************
 
     $("#delete-btn").click(function () {
 
-        var pet_id = $("#pet_id").val();
+        var product_id = $("#product_id").val();
 
         var ajax = $.ajax({
             type: "DELETE",
-            url: "/pets/" + pet_id,
+            url: "/inventory/" + product_id,
             contentType: "application/json",
             data: '',
         })
 
         ajax.done(function(res){
             clear_form_data()
-            flash_message("Pet has been Deleted!")
+            flash_message("Product has been Deleted!")
         });
 
         ajax.fail(function(res){
@@ -169,43 +194,67 @@ $(function () {
     // ****************************************
 
     $("#clear-btn").click(function () {
-        $("#pet_id").val("");
+        $("#product_id").val("");
         clear_form_data()
     });
 
     // ****************************************
-    // Search for a Pet
+    // Search for a Product
     // ****************************************
 
     $("#search-btn").click(function () {
 
-        var name = $("#pet_name").val();
-        var category = $("#pet_category").val();
-        var available = $("#pet_available").val() == "true";
+        
+        var product_name = $("#product_name").val();
+        var supplier_name = $("#supplier_name").val();
+        var product_id = $("#product_id").val();
+        var supplier_id = $("#product_id").val();
+        var inventory_id = $("#inventory_id").val();
+        var supplier_status = $("#supplier_status").val() == "enabled";
 
         var queryString = ""
 
-        if (name) {
-            queryString += 'name=' + name
+        if (product_name) {
+            queryString += 'name=' + product_name
         }
-        if (category) {
+        if (product_id) {
             if (queryString.length > 0) {
-                queryString += '&category=' + category
+                queryString += '&product_id=' + product_id
             } else {
-                queryString += 'category=' + category
+                queryString += 'product_id=' + product_id
             }
-        }
-        if (available) {
+
+        if (supplier_id) {
             if (queryString.length > 0) {
-                queryString += '&available=' + available
+                queryString += '&supplier_id=' + supplier_id
             } else {
-                queryString += 'available=' + available
+                queryString += 'supplier_id=' + supplier_id
             }
+        if (supplier_status) {
+            if (queryString.length > 0) {
+                queryString += '&enabled=' + enabled
+            } else {
+                queryString += 'enabled=' + enabled
+            }
+
+            if (inventory_id) {
+                if (queryString.length > 0) {
+                    queryString += '&inventory_id=' + inventory_id
+                } else {
+                    queryString += 'inventory_id=' + inventory_id
+                }
+
+            if (supplier_name) {
+                if (queryString.length > 0) {
+                    queryString += '&supplier_name=' + supplier_name
+                } else {
+                    queryString += 'supplier_name=' + supplier_name
+                }
         }
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/pets?" + queryString,
+            url: "/inventory?" + queryString,
             contentType: "application/json",
             data: ''
         })
@@ -220,21 +269,21 @@ $(function () {
             header += '<th style="width:40%">Category</th>'
             header += '<th style="width:10%">Available</th></tr>'
             $("#search_results").append(header);
-            var firstPet = "";
+            var firstProduct = "";
             for(var i = 0; i < res.length; i++) {
-                var pet = res[i];
-                var row = "<tr><td>"+pet._id+"</td><td>"+pet.name+"</td><td>"+pet.category+"</td><td>"+pet.available+"</td></tr>";
+                var product_id = res[i];
+                var row = "<tr><td>"+product.id+"</td><td>"+product.name+"</td><td>"+supplier.id+"</td><td>"+supplier.status+"</td></tr>"+supplier.name+"</td><td>"+inventory.id+"</td><td>";
                 $("#search_results").append(row);
                 if (i == 0) {
-                    firstPet = pet;
+                    firstProduct = product;
                 }
             }
 
             $("#search_results").append('</table>');
 
             // copy the first result to the form
-            if (firstPet != "") {
-                update_form_data(firstPet)
+            if (firstProduct != "") {
+                update_form_data(firstProduct)
             }
 
             flash_message("Success")
