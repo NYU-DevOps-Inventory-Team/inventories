@@ -6,21 +6,34 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
-        $("#pet_id").val(res._id);
-        $("#pet_name").val(res.name);
-        $("#pet_category").val(res.category);
-        if (res.available == true) {
-            $("#pet_available").val("true");
+        $("#inventory_id").val(res._id);
+        $("#product_id").val(res.product_id);
+        $("#product_name").val(res.product_name);
+        $("#quantity").val(res.quantity);
+        $("#supplier_id").val(res.supplier_id);
+        $("#supplier_name").val(res.supplier_name);
+        $("#unit_price").val(res.unit_price);
+        $("#restock_threshold").val(res.restock_threshold);
+
+
+        if (res.supplier_status === "enabled") {
+            $("#supplier_status").val("enabled");
         } else {
-            $("#pet_available").val("false");
+            $("#supplier_status").val("disabled");
         }
     }
 
     /// Clears all form fields
     function clear_form_data() {
-        $("#pet_name").val("");
-        $("#pet_category").val("");
-        $("#pet_available").val("");
+        $("#inventory_id").val("");
+        $("#product_id").val("");
+        $("#product_name").val("");
+        $("#quantity").val("");
+        $("#supplier_status").val("");
+        $("#supplier_name").val("");
+        $("#supplier_id").val("");
+        $("#unit_price").val("");
+        $("#restock_threshold").val("");
     }
 
     // Updates the flash message area
