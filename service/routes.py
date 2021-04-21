@@ -34,14 +34,7 @@ from . import app
 @app.route("/")
 def index():
     """ Root URL response """
-    return (
-        jsonify(
-            name="Inventory REST API Service",
-            version="1.0",
-            paths=url_for("list_inventory_items", _external=True),
-        ),
-        status.HTTP_200_OK,
-    )
+    return app.send_static_file('index.html')
 
 
 ######################################################################
@@ -87,7 +80,7 @@ def list_inventory_items():
     elif product_name:
         all_inventory_items = InventoryItem.find_by_product_name(product_name)
     elif supplier_id:
-        all_inventory_items = InventoryItem.find_by_supplier_id(supplier_id)    
+        all_inventory_items = InventoryItem.find_by_supplier_id(supplier_id)
     else:
         all_inventory_items = InventoryItem.all()
 

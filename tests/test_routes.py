@@ -89,8 +89,7 @@ class TestInventoryServer(TestCase):
         """ Test the Home Page """
         resp = self.app.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = resp.get_json()
-        self.assertEqual(data["name"], "Inventory REST API Service")
+        self.assertIn(b'Inventory REST API Service', resp.data)
 
     def test_create_new_inventory_item(self):
         """ Create a new Inventory item """
@@ -152,6 +151,24 @@ class TestInventoryServer(TestCase):
         # check the data
         for item in data:
             self.assertEqual(item["supplier_name"], desired_supplier_name)
+
+    def test_query_inventory_items_list_by_supplier_id(self):
+        """ Query Inventory Items by Supplier ID """
+        test_items = self._create_test_inventory_items(10)
+        desired_supplier_id = test_items[0].supplier_id
+        items_with_desired_supplier_id = [item for item in test_items if item.supplier_id == desired_supplier_id]
+
+        # hit the route
+        resp = self.app.get(
+            "/inventory", query_string="supplier_id={}".format(desired_supplier_id)
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), len(items_with_desired_supplier_id))
+
+        # check the data
+        for item in data:
+            self.assertEqual(item["supplier_id"], desired_supplier_id)
 
     def test_query_inventory_items_list_by_product_name(self):
         """ Query Inventory Items by Product Name """
