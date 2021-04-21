@@ -17,26 +17,31 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions
 
-ID_PREFIX = 'pet_'
+ID_PREFIX = 'inventory_item_'
 
-@given('the following pets')
+@given('the following inventory items')
 def step_impl(context):
-    """ Delete all Pets and load new ones """
+    """ Delete all Inventory Items and load new ones """
     headers = {'Content-Type': 'application/json'}
-    # list all of the pets and delete them one by one
-    context.resp = requests.get(context.base_url + '/pets', headers=headers)
+    # list all of the items and delete them one by one
+    context.resp = requests.get(context.base_url + '/inventory', headers=headers)
     expect(context.resp.status_code).to_equal(200)
-    for pet in context.resp.json():
-        context.resp = requests.delete(context.base_url + '/pets/' + str(pet["_id"]), headers=headers)
+    for item in context.resp.json():
+        context.resp = requests.delete(context.base_url + '/inventory/' + str(item["_id"]), headers=headers)
         expect(context.resp.status_code).to_equal(204)
     
-    # load the database with new pets
-    create_url = context.base_url + '/pets'
+    # load the database with new inventory items
+    create_url = context.base_url + '/inventory'
     for row in context.table:
         data = {
-            "name": row['name'],
-            "category": row['category'],
-            "available": row['available'] in ['True', 'true', '1']
+            "product_name": row['product_name'],
+            "product_id": row['product_id'],
+            "supplier_name": row['supplier_name'],
+            "supplier_id": row['supplier_id'],
+            "restock_threshold": row['restock_threshold'],
+            "quantity": row['quantity'],
+            "unit_price": row['unit_price'],
+            "supplier_status": row['supplier_status'] in ['Enabled', 'enabled']
             }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
