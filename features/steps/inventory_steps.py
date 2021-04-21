@@ -19,6 +19,7 @@ from selenium.webdriver.support import expected_conditions
 
 ID_PREFIX = 'inventory_item_'
 
+
 @given('the following inventory items')
 def step_impl(context):
     """ Delete all Inventory Items and load new ones """
@@ -27,9 +28,9 @@ def step_impl(context):
     context.resp = requests.get(context.base_url + '/inventory', headers=headers)
     expect(context.resp.status_code).to_equal(200)
     for item in context.resp.json():
-        context.resp = requests.delete(context.base_url + '/inventory/' + str(item["_id"]), headers=headers)
+        context.resp = requests.delete(context.base_url + '/inventory/' + str(item["inventory_id"]), headers=headers)
         expect(context.resp.status_code).to_equal(204)
-    
+
     # load the database with new inventory items
     create_url = context.base_url + '/inventory'
     for row in context.table:
@@ -42,75 +43,85 @@ def step_impl(context):
             "quantity": row['quantity'],
             "unit_price": row['unit_price'],
             "supplier_status": row['supplier_status'] in ['Enabled', 'enabled']
-            }
+        }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
         expect(context.resp.status_code).to_equal(201)
+
 
 @when('I visit the "home page"')
 def step_impl(context):
     """ Make a call to the base URL """
     context.driver.get(context.base_url)
     # Uncomment next line to take a screenshot of the web page
-    #context.driver.save_screenshot('home_page.png')
+    # context.driver.save_screenshot('home_page.png')
+
 
 @then('I should see "{message}" in the title')
 def step_impl(context, message):
     """ Check the document title for a message """
     expect(context.driver.title).to_contain(message)
 
+
 @then('I should not see "{message}"')
 def step_impl(context, message):
     error_msg = "I should not see '%s' in '%s'" % (message, context.resp.text)
     ensure(message in context.resp.text, False, error_msg)
 
-# @when('I set the "{element_name}" to "{text_string}"')
-# def step_impl(context, element_name, text_string):
-#     element_id = ID_PREFIX + element_name.lower()
-#     element = context.driver.find_element_by_id(element_id)
-#     element.clear()
-#     element.send_keys(text_string)
 
-# @when('I select "{text}" in the "{element_name}" dropdown')
-# def step_impl(context, text, element_name):
-#     element_id = ID_PREFIX + element_name.lower()
-#     element = Select(context.driver.find_element_by_id(element_id))
-#     element.select_by_visible_text(text)
+@when('I set the "{element_name}" to "{text_string}"')
+def step_impl(context, element_name, text_string):
+    element_id = element_name.lower()
+    element = context.driver.find_element_by_id(element_id)
+    element.clear()
+    element.send_keys(text_string)
 
-# @then('I should see "{text}" in the "{element_name}" dropdown')
-# def step_impl(context, text, element_name):
-#     element_id = ID_PREFIX + element_name.lower()
-#     element = Select(context.driver.find_element_by_id(element_id))
-#     expect(element.first_selected_option.text).to_equal(text)
 
-# @then('the "{element_name}" field should be empty')
-# def step_impl(context, element_name):
-#     element_id = ID_PREFIX + element_name.lower()
-#     element = context.driver.find_element_by_id(element_id)
-#     expect(element.get_attribute('value')).to_be(u'')
+@when('I select "{text}" in the "{element_name}" dropdown')
+def step_impl(context, text, element_name):
+    element_id = element_name.lower()
+    element = Select(context.driver.find_element_by_id(element_id))
+    element.select_by_visible_text(text)
+
+
+@then('I should see "{text}" in the "{element_name}" dropdown')
+def step_impl(context, text, element_name):
+    element_id = element_name.lower()
+    element = Select(context.driver.find_element_by_id(element_id))
+    expect(element.first_selected_option.text).to_equal(text)
+
+
+@then('the "{element_name}" field should be empty')
+def step_impl(context, element_name):
+    element_id = element_name.lower()
+    element = context.driver.find_element_by_id(element_id)
+    expect(element.get_attribute('value')).to_be(u'')
+
 
 # ##################################################################
 # # These two function simulate copy and paste
 # ##################################################################
-# @when('I copy the "{element_name}" field')
-# def step_impl(context, element_name):
-#     element_id = ID_PREFIX + element_name.lower()
-#     # element = context.driver.find_element_by_id(element_id)
-#     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
-#         expected_conditions.presence_of_element_located((By.ID, element_id))
-#     )
-#     context.clipboard = element.get_attribute('value')
-#     logging.info('Clipboard contains: %s', context.clipboard)
+@when('I copy the "{element_name}" field')
+def step_impl(context, element_name):
+    element_id = element_name.lower()
+    # element = context.driver.find_element_by_id(element_id)
+    element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.presence_of_element_located((By.ID, element_id))
+    )
+    context.clipboard = element.get_attribute('value')
+    logging.info('Clipboard contains: %s', context.clipboard)
 
-# @when('I paste the "{element_name}" field')
-# def step_impl(context, element_name):
-#     element_id = ID_PREFIX + element_name.lower()
-#     # element = context.driver.find_element_by_id(element_id)
-#     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
-#         expected_conditions.presence_of_element_located((By.ID, element_id))
-#     )
-#     element.clear()
-#     element.send_keys(context.clipboard)
+
+@when('I paste the "{element_name}" field')
+def step_impl(context, element_name):
+    element_id = element_name.lower()
+    # element = context.driver.find_element_by_id(element_id)
+    element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.presence_of_element_located((By.ID, element_id))
+    )
+    element.clear()
+    element.send_keys(context.clipboard)
+
 
 # ##################################################################
 # # This code works because of the following naming convention:
@@ -120,40 +131,44 @@ def step_impl(context, message):
 # # to get the element id of any button
 # ##################################################################
 
-# @when('I press the "{button}" button')
-# def step_impl(context, button):
-#     button_id = button.lower() + '-btn'
-#     context.driver.find_element_by_id(button_id).click()
+@when('I press the "{button}" button')
+def step_impl(context, button):
+    button_id = button.lower() + '-btn'
+    context.driver.find_element_by_id(button_id).click()
 
-# @then('I should see "{name}" in the results')
-# def step_impl(context, name):
-#     # element = context.driver.find_element_by_id('search_results')
-#     # expect(element.text).to_contain(name)
-#     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
-#         expected_conditions.text_to_be_present_in_element(
-#             (By.ID, 'search_results'),
-#             name
-#         )
-#     )
-#     expect(found).to_be(True)
 
-# @then('I should not see "{name}" in the results')
-# def step_impl(context, name):
-#     element = context.driver.find_element_by_id('search_results')
-#     error_msg = "I should not see '%s' in '%s'" % (name, element.text)
-#     ensure(name in element.text, False, error_msg)
+@then('I should see "{name}" in the results')
+def step_impl(context, name):
+    # element = context.driver.find_element_by_id('search_results')
+    # expect(element.text).to_contain(name)
+    found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'search_results'),
+            name
+        )
+    )
+    expect(found).to_be(True)
 
-# @then('I should see the message "{message}"')
-# def step_impl(context, message):
-#     # element = context.driver.find_element_by_id('flash_message')
-#     # expect(element.text).to_contain(message)
-#     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
-#         expected_conditions.text_to_be_present_in_element(
-#             (By.ID, 'flash_message'),
-#             message
-#         )
-#     )
-#     expect(found).to_be(True)
+
+@then('I should not see "{name}" in the results')
+def step_impl(context, name):
+    element = context.driver.find_element_by_id('search_results')
+    error_msg = "I should not see '%s' in '%s'" % (name, element.text)
+    ensure(name in element.text, False, error_msg)
+
+
+@then('I should see the message "{message}"')
+def step_impl(context, message):
+    # element = context.driver.find_element_by_id('flash_message')
+    # expect(element.text).to_contain(message)
+    found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'flash_message'),
+            message
+        )
+    )
+    expect(found).to_be(True)
+
 
 # ##################################################################
 # # This code works because of the following naming convention:
@@ -162,175 +177,26 @@ def step_impl(context, message):
 # # We can then lowercase the name and prefix with pet_ to get the id
 # ##################################################################
 
-# @then('I should see "{text_string}" in the "{element_name}" field')
-# def step_impl(context, text_string, element_name):
-#     element_id = ID_PREFIX + element_name.lower()
-#     # element = context.driver.find_element_by_id(element_id)
-#     # expect(element.get_attribute('value')).to_equal(text_string)
-#     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
-#         expected_conditions.text_to_be_present_in_element_value(
-#             (By.ID, element_id),
-#             text_string
-#         )
-#     )
-#     expect(found).to_be(True)
-
-# @when('I change "{element_name}" to "{text_string}"')
-# def step_impl(context, element_name, text_string):
-#     element_id = ID_PREFIX + element_name.lower()
-#     # element = context.driver.find_element_by_id(element_id)
-#     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
-#         expected_conditions.presence_of_element_located((By.ID, element_id))
-#     )
-#     element.clear()
-#     element.send_keys(text_string)
+@then('I should see "{text_string}" in the "{element_name}" field')
+def step_impl(context, text_string, element_name):
+    element_id = element_name.lower()
+    # element = context.driver.find_element_by_id(element_id)
+    # expect(element.get_attribute('value')).to_equal(text_string)
+    found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.text_to_be_present_in_element_value(
+            (By.ID, element_id),
+            text_string
+        )
+    )
+    expect(found).to_be(True)
 
 
-@when(u'I set the "Product Name" to "product4"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I set the "Product Name" to "product4"')
-
-
-@when(u'I set the "Product ID" to "4"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I set the "Product ID" to "4"')
-
-
-@when(u'I set the "Supplier Name" to "supplier4"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I set the "Supplier Name" to "supplier4"')
-
-
-@when(u'I set the "Supplier ID" to "4"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I set the "Supplier ID" to "4"')
-
-
-@when(u'I set the "Quantity" to "10"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I set the "Quantity" to "10"')
-
-
-@when(u'I set the "Restock Threshold" to "4"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I set the "Restock Threshold" to "4"')
-
-
-@when(u'I set the "Unit Price" to "20.00"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I set the "Unit Price" to "20.00"')
-
-
-@when(u'I select "Enabled" in the "Supplier Status" dropdown')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I select "Enabled" in the "Supplier Status" dropdown')
-
-
-@when(u'I press the "Create" button')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I press the "Create" button')
-
-
-@then(u'I should see the message "Success"')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see the message "Success"')
-
-
-@when(u'I copy the "Inventory ID" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I copy the "Inventory ID" field')
-
-
-@when(u'I press the "Clear" button')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I press the "Clear" button')
-
-
-@then(u'the "Inventory ID" field should be empty')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the "Inventory ID" field should be empty')
-
-
-@then(u'the "Product Name" field should be empty')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the "Product Name" field should be empty')
-
-
-@then(u'the "Product ID" field should be empty')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the "Product ID" field should be empty')
-
-
-@then(u'the "Supplier Name" field should be empty')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the "Supplier Name" field should be empty')
-
-
-@then(u'the "Supplier ID" field should be empty')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the "Supplier ID" field should be empty')
-
-
-@then(u'the "Quantity" field should be empty')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the "Quantity" field should be empty')
-
-
-@then(u'the "Restock Threshold" field should be empty')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the "Restock Threshold" field should be empty')
-
-
-@then(u'the "Unit Price" field should be empty')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the "Unit Price" field should be empty')
-
-
-@when(u'I paste the "Inventory ID" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I paste the "Inventory ID" field')
-
-
-@when(u'I press the "Retrieve" button')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I press the "Retrieve" button')
-
-
-@then(u'I should see "product4" in the "Product Name" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see "product4" in the "Product Name" field')
-
-
-@then(u'I should see "4" in the "Product ID" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see "4" in the "Product ID" field')
-
-
-@then(u'I should see "supplier4" in the "Supplier Name" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see "supplier4" in the "Supplier Name" field')
-
-
-@then(u'I should see "4" in the "Supplier ID" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see "4" in the "Supplier ID" field')
-
-
-@then(u'I should see "10" in the "Quantity" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see "10" in the "Quantity" field')
-
-
-@then(u'I should see "4" in the "Restock Threshold" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see "4" in the "Restock Threshold" field')
-
-
-@then(u'I should see "20.00" in the "Unit Price" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see "20.00" in the "Unit Price" field')
-
-
-@then(u'I should see "Enabled" in the "Supplier Status" field')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then I should see "Enabled" in the "Supplier Status" field')
+@when('I change "{element_name}" to "{text_string}"')
+def step_impl(context, element_name, text_string):
+    element_id = element_name.lower()
+    # element = context.driver.find_element_by_id(element_id)
+    element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
+        expected_conditions.presence_of_element_located((By.ID, element_id))
+    )
+    element.clear()
+    element.send_keys(text_string)

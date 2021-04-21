@@ -18,37 +18,37 @@ Scenario: The server is running
 
 Scenario: Create a Inventory Item
     When I visit the "Home Page"
-    And I set the "Product Name" to "product4"
-    And I set the "Product ID" to "4"
-    And I set the "Supplier Name" to "supplier4"
-    And I set the "Supplier ID" to "4"
-    And I set the "Quantity" to "10"
-    And I set the "Restock Threshold" to "4"
-    And I set the "Unit Price" to "20.00"
-    And I select "Enabled" in the "Supplier Status" dropdown
+    And I set the "product_name" to "product4"
+    And I set the "product_id" to "4"
+    And I set the "supplier_name" to "supplier4"
+    And I set the "supplier_id" to "4"
+    And I set the "quantity" to "10"
+    And I set the "restock_threshold" to "4"
+    And I set the "unit_price" to "20.00"
+    And I select "Enabled" in the "supplier_status" dropdown
     And I press the "Create" button
     Then I should see the message "Success"
 
-    When I copy the "Inventory ID" field
+    When I copy the "inventory_id" field
     And I press the "Clear" button
-    Then the "Inventory ID" field should be empty
-    And the "Product Name" field should be empty
-    And the "Product ID" field should be empty
-    And the "Supplier Name" field should be empty
-    And the "Supplier ID" field should be empty
-    And the "Quantity" field should be empty
-    And the "Restock Threshold" field should be empty
-    And the "Unit Price" field should be empty
-    When I paste the "Inventory ID" field
+    Then the "inventory_id" field should be empty
+    And the "product_name" field should be empty
+    And the "product_id" field should be empty
+    And the "supplier_name" field should be empty
+    And the "supplier_id" field should be empty
+    And the "quantity" field should be empty
+    And the "restock_threshold" field should be empty
+    And the "unit_price" field should be empty
+    When I paste the "inventory_id" field
     And I press the "Retrieve" button
-    Then I should see "product4" in the "Product Name" field
-    And I should see "4" in the "Product ID" field
-    And I should see "supplier4" in the "Supplier Name" field
-    And I should see "4" in the "Supplier ID" field
-    And I should see "10" in the "Quantity" field
-    And I should see "4" in the "Restock Threshold" field
-    And I should see "20.00" in the "Unit Price" field
-    And I should see "Enabled" in the "Supplier Status" field
+    Then I should see "product4" in the "product_name" field
+    And I should see "4" in the "product_id" field
+    And I should see "supplier4" in the "supplier_name" field
+    And I should see "4" in the "supplier_id" field
+    And I should see "10" in the "quantity" field
+    And I should see "4" in the "restock_threshold" field
+    And I should see "20.00" in the "unit_price" field
+    And I should see "Enabled" in the "supplier_status" field
 
 
 # Scenario: List all inventory items
@@ -61,7 +61,7 @@ Scenario: Create a Inventory Item
 
 # Scenario: List all suppliers
 #     When I visit the "Home Page"
-#     And I set the "Supplier Name" to "supplier1"
+#     And I set the "supplier_name" to "supplier1"
 #     And I press the "Search" button
 #     Then I should see "supplier1" in the results
 #     And I should not see "supplier2" in the results
@@ -69,23 +69,23 @@ Scenario: Create a Inventory Item
 
 # Scenario: Update an inventory item
 #     When I visit the "Home Page"
-#     And I set the "Product Name" to "product1"
+#     And I set the "product_name" to "product1"
 #     And I press the "Search" button
-#     Then I should see "product1" in the "Product Name" field
-#     And I should see "supplier1" in the "Supplier Name" field
-#     And I should see "1" in the "Supplier ID" field
-#     And I should see "enabled" in the "Supplier Status" field
-#     And I should see "4" in the "Quantity" field
-#     And I should see "2" in the "Restock Threshold" field
-#     And I should see "5.00" in the "Unit Price" field
-#     When I change "Product Name" to "product5"
+#     Then I should see "product1" in the "product_name" field
+#     And I should see "supplier1" in the "supplier_name" field
+#     And I should see "1" in the "supplier_id" field
+#     And I should see "enabled" in the "supplier_status" field
+#     And I should see "4" in the "quantity" field
+#     And I should see "2" in the "restock_threshold" field
+#     And I should see "5.00" in the "unit_price" field
+#     When I change "product_name" to "product5"
 #     And I press the "Update" button
 #     Then I should see the message "Success"
-#     When I copy the "Inventory ID" field
+#     When I copy the "inventory_id" field
 #     And I press the "Clear" button
-#     And I paste the "Inventory ID" field
+#     And I paste the "inventory_id" field
 #     And I press the "Retrieve" button
-#     Then I should see "product5" in the "Product Name" field
+#     Then I should see "product5" in the "product_name" field
 #     When I press the "Clear" button
 #     And I press the "Search" button
 #     Then I should see "product5" in the results
