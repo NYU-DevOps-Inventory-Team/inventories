@@ -99,6 +99,7 @@ $(function () {
         const restock_threshold = $("#restock_threshold").val();
 
         const data = {
+            "inventory_id": inventory_id,
             "product_id": product_id,
             "product_name": product_name,
             "supplier_id": supplier_id,
@@ -161,7 +162,7 @@ $(function () {
 
     $("#delete-btn").click(function () {
 
-        const inventory_id = $("#product_id").val();
+        const inventory_id = $("#inventory_id").val();
 
         const ajax = $.ajax({
             type: "DELETE",
@@ -172,7 +173,7 @@ $(function () {
 
         ajax.done(function (res) {
             clear_form_data()
-            flash_message("Product has been Deleted!")
+            flash_message("Inventory ID has been Deleted!")
         });
 
         ajax.fail(function (res) {
@@ -185,7 +186,7 @@ $(function () {
     // ****************************************
 
     $("#clear-btn").click(function () {
-        $("#product_id").val("");
+        $("#inventory_id").val("");
         clear_form_data()
     });
 
@@ -197,9 +198,9 @@ $(function () {
         // FIXME: We dont support searching by most of these fields so those will not work. see ../../models.py to either make more search methods or determine which to remove below
         const inventory_id = $("#inventory_id").val();
         const product_id = $("#product_id").val();
-        const product_name = $("#product_name").val();
-        const supplier_id = $("#supplier_id").val();
-        const supplier_name = $("#supplier_name").val();
+        const product_name = $("#product_name").val(); //supported
+        const supplier_id = $("#supplier_id").val(); //supported
+        const supplier_name = $("#supplier_name").val(); //supported
         const supplier_status = $("#supplier_status").val() === "enabled";
 
         let queryString = "";
