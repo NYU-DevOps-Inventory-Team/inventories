@@ -184,3 +184,153 @@ def step_impl(context, message):
 #     )
 #     element.clear()
 #     element.send_keys(text_string)
+
+
+@when(u'I set the "Product Name" to "product4"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Product Name" to "product4"')
+
+
+@when(u'I set the "Product ID" to "4"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Product ID" to "4"')
+
+
+@when(u'I set the "Supplier Name" to "supplier4"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Supplier Name" to "supplier4"')
+
+
+@when(u'I set the "Supplier ID" to "4"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Supplier ID" to "4"')
+
+
+@when(u'I set the "Quantity" to "10"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Quantity" to "10"')
+
+
+@when(u'I set the "Restock Threshold" to "4"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Restock Threshold" to "4"')
+
+
+@when(u'I set the "Unit Price" to "20.00"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I set the "Unit Price" to "20.00"')
+
+
+@when(u'I select "Enabled" in the "Supplier Status" dropdown')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I select "Enabled" in the "Supplier Status" dropdown')
+
+
+@when(u'I press the "Create" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Create" button')
+
+
+@then(u'I should see the message "Success"')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see the message "Success"')
+
+
+@when(u'I copy the "Inventory ID" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I copy the "Inventory ID" field')
+
+
+@when(u'I press the "Clear" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Clear" button')
+
+
+@then(u'the "Inventory ID" field should be empty')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the "Inventory ID" field should be empty')
+
+
+@then(u'the "Product Name" field should be empty')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the "Product Name" field should be empty')
+
+
+@then(u'the "Product ID" field should be empty')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the "Product ID" field should be empty')
+
+
+@then(u'the "Supplier Name" field should be empty')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the "Supplier Name" field should be empty')
+
+
+@then(u'the "Supplier ID" field should be empty')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the "Supplier ID" field should be empty')
+
+
+@then(u'the "Quantity" field should be empty')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the "Quantity" field should be empty')
+
+
+@then(u'the "Restock Threshold" field should be empty')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the "Restock Threshold" field should be empty')
+
+
+@then(u'the "Unit Price" field should be empty')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the "Unit Price" field should be empty')
+
+
+@when(u'I paste the "Inventory ID" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I paste the "Inventory ID" field')
+
+
+@when(u'I press the "Retrieve" button')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: When I press the "Retrieve" button')
+
+
+@then(u'I should see "product4" in the "Product Name" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "product4" in the "Product Name" field')
+
+
+@then(u'I should see "4" in the "Product ID" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "4" in the "Product ID" field')
+
+
+@then(u'I should see "supplier4" in the "Supplier Name" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "supplier4" in the "Supplier Name" field')
+
+
+@then(u'I should see "4" in the "Supplier ID" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "4" in the "Supplier ID" field')
+
+
+@then(u'I should see "10" in the "Quantity" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "10" in the "Quantity" field')
+
+
+@then(u'I should see "4" in the "Restock Threshold" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "4" in the "Restock Threshold" field')
+
+
+@then(u'I should see "20.00" in the "Unit Price" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "20.00" in the "Unit Price" field')
+
+
+@then(u'I should see "Enabled" in the "Supplier Status" field')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then I should see "Enabled" in the "Supplier Status" field')

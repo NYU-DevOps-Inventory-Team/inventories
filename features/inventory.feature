@@ -51,36 +51,42 @@ Scenario: Create a Inventory Item
     And I should see "Enabled" in the "Supplier Status" field
 
 
-# Scenario: List all pets
+# Scenario: List all inventory items
 #     When I visit the "Home Page"
 #     And I press the "Search" button
-#     Then I should see "fido" in the results
-#     And I should see "kitty" in the results
-#     And I should not see "leo" in the results
+#     Then I should see "product1" in the results
+#     And I should see "product2" in the results
+#     And I should see "product3" in the results
+#     And I should not see "product4" in the results
 
-# Scenario: List all dogs
+# Scenario: List all suppliers
 #     When I visit the "Home Page"
-#     And I set the "Category" to "dog"
+#     And I set the "Supplier Name" to "supplier1"
 #     And I press the "Search" button
-#     Then I should see "fido" in the results
-#     And I should not see "kitty" in the results
-#     And I should not see "leo" in the results
+#     Then I should see "supplier1" in the results
+#     And I should not see "supplier2" in the results
+#     And I should not see "supplier3" in the results
 
-# Scenario: Update a Pet
+# Scenario: Update an inventory item
 #     When I visit the "Home Page"
-#     And I set the "Name" to "fido"
+#     And I set the "Product Name" to "product1"
 #     And I press the "Search" button
-#     Then I should see "fido" in the "Name" field
-#     And I should see "dog" in the "Category" field
-#     When I change "Name" to "Boxer"
+#     Then I should see "product1" in the "Product Name" field
+#     And I should see "supplier1" in the "Supplier Name" field
+#     And I should see "1" in the "Supplier ID" field
+#     And I should see "enabled" in the "Supplier Status" field
+#     And I should see "4" in the "Quantity" field
+#     And I should see "2" in the "Restock Threshold" field
+#     And I should see "5.00" in the "Unit Price" field
+#     When I change "Product Name" to "product5"
 #     And I press the "Update" button
 #     Then I should see the message "Success"
-#     When I copy the "Id" field
+#     When I copy the "Inventory ID" field
 #     And I press the "Clear" button
-#     And I paste the "Id" field
+#     And I paste the "Inventory ID" field
 #     And I press the "Retrieve" button
-#     Then I should see "Boxer" in the "Name" field
+#     Then I should see "product5" in the "Product Name" field
 #     When I press the "Clear" button
 #     And I press the "Search" button
-#     Then I should see "Boxer" in the results
-#     Then I should not see "fido" in the results
+#     Then I should see "product5" in the results
+#     Then I should not see "product1" in the results
