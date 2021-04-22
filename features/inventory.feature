@@ -16,6 +16,7 @@ Scenario: The server is running
     Then I should see "Inventory RESTful Service" in the title
     And I should not see "404 Not Found"
 
+# CREATE
 Scenario: Create a Inventory Item
     When I visit the "Home Page"
     And I set the "product_name" to "product4"
@@ -40,6 +41,7 @@ Scenario: Create a Inventory Item
     And the "restock_threshold" field should be empty
     And the "unit_price" field should be empty
 
+    # READ
     When I paste the "inventory_id" field
     And I press the "Retrieve" button
     Then I should see "product4" in the "product_name" field
@@ -51,6 +53,7 @@ Scenario: Create a Inventory Item
     And I should see "20" in the "unit_price" field
     And I should see "enabled" in the "supplier_status" field
 
+# LIST
  Scenario: List all inventory items
      When I visit the "Home Page"
      And I press the "Search" button
@@ -59,6 +62,7 @@ Scenario: Create a Inventory Item
      And I should see "product3" in the results
      And I should not see "product4" in the results
 
+# QUERY
  Scenario: List all suppliers
      When I visit the "Home Page"
      And I set the "supplier_name" to "supplier1"
@@ -67,6 +71,7 @@ Scenario: Create a Inventory Item
      And I should not see "supplier2" in the results
      And I should not see "supplier3" in the results
 
+ # UPDATE
  Scenario: Update an inventory item
      When I visit the "Home Page"
      And I set the "product_name" to "product1"
@@ -93,3 +98,9 @@ Scenario: Create a Inventory Item
      And I press the "Search" button
      Then I should see "product5" in the results
      Then I should not see "product1" in the results
+
+# DELETE
+#Scenario: Delete an inventory item
+
+# ACTION
+#Scenario: Disable inventory item by supplier ID
