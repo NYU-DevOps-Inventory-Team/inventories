@@ -1,7 +1,7 @@
 """
 Inventory Steps
 
-Steps file for Pet.feature
+Steps file for inventory.feature
 
 For information on Waiting until elements are present in the HTML see:
     https://selenium-python.readthedocs.io/waits.html
@@ -16,8 +16,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions
-
-ID_PREFIX = 'inventory_item_'
 
 
 @given('the following inventory items')
@@ -104,7 +102,7 @@ def step_impl(context, element_name):
 @when('I copy the "{element_name}" field')
 def step_impl(context, element_name):
     element_id = element_name.lower()
-    # element = context.driver.find_element_by_id(element_id)
+    element = context.driver.find_element_by_id(element_id)
     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.presence_of_element_located((By.ID, element_id))
     )
@@ -115,7 +113,7 @@ def step_impl(context, element_name):
 @when('I paste the "{element_name}" field')
 def step_impl(context, element_name):
     element_id = element_name.lower()
-    # element = context.driver.find_element_by_id(element_id)
+    element = context.driver.find_element_by_id(element_id)
     element = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.presence_of_element_located((By.ID, element_id))
     )
@@ -139,8 +137,8 @@ def step_impl(context, button):
 
 @then('I should see "{name}" in the results')
 def step_impl(context, name):
-    # element = context.driver.find_element_by_id('search_results')
-    # expect(element.text).to_contain(name)
+    element = context.driver.find_element_by_id('search_results')
+    expect(element.text).to_contain(name)
     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.text_to_be_present_in_element(
             (By.ID, 'search_results'),
@@ -159,8 +157,8 @@ def step_impl(context, name):
 
 @then('I should see the message "{message}"')
 def step_impl(context, message):
-    # element = context.driver.find_element_by_id('flash_message')
-    # expect(element.text).to_contain(message)
+    element = context.driver.find_element_by_id('flash_message')
+    expect(element.text).to_contain(message)
     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.text_to_be_present_in_element(
             (By.ID, 'flash_message'),
@@ -180,8 +178,8 @@ def step_impl(context, message):
 @then('I should see "{text_string}" in the "{element_name}" field')
 def step_impl(context, text_string, element_name):
     element_id = element_name.lower()
-    # element = context.driver.find_element_by_id(element_id)
-    # expect(element.get_attribute('value')).to_equal(text_string)
+    element = context.driver.find_element_by_id(element_id)
+    expect(element.get_attribute('value')).to_equal(text_string)
     found = WebDriverWait(context.driver, context.WAIT_SECONDS).until(
         expected_conditions.text_to_be_present_in_element_value(
             (By.ID, element_id),
