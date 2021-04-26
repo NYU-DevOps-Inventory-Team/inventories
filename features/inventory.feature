@@ -41,7 +41,7 @@ Scenario: Create a Inventory Item
     And the "restock_threshold" field should be empty
     And the "unit_price" field should be empty
 
-    # READ
+# READ
     When I paste the "inventory_id" field
     And I press the "Retrieve" button
     Then I should see "product4" in the "product_name" field
@@ -101,6 +101,19 @@ Scenario: Create a Inventory Item
 
 # DELETE
 #Scenario: Delete an inventory item
+
+Scenario: Delete an inventory item
+    When I visit the "Home Page"
+    And I set the "product_name" to "product1"
+    And I press the "search" button
+    Then I should see "product1" in the "product_name" field
+    When I copy the "inventory_id" field
+    And I press the "clear" button
+    And I paste the "inventory_id" field
+    And I press the "Delete" button
+    And I press the "clear" button
+    And I press the "search" button
+    Then I should not see "product1" in the results
 
 # ACTION
 #Scenario: Disable inventory item by supplier ID
