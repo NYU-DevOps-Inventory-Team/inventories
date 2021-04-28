@@ -28,7 +28,7 @@ $(function () {
         $("#product_name").val("");
         $("#supplier_id").val("");
         $("#supplier_name").val("");
-        $("#supplier_status").val("");
+        $("#supplier_status").val("enabled");
         $("#quantity").val("");
         $("#unit_price").val("");
         $("#restock_threshold").val("");
@@ -49,7 +49,7 @@ $(function () {
         const product_name = $("#product_name").val();
         const supplier_id = $("#supplier_id").val();
         const supplier_name = $("#supplier_name").val();
-        const supplier_status = $("#supplier_status").val() === "enabled";
+        const supplier_status = $("#supplier_status").val();
         const quantity = $("#quantity").val();
         const unit_price = $("#unit_price").val();
         const restock_threshold = $("#restock_threshold").val();
@@ -93,7 +93,7 @@ $(function () {
         const product_name = $("#product_name").val();
         const supplier_name = $("#supplier_name").val();
         const supplier_id = $("#supplier_id").val();
-        const supplier_status = $("#supplier_status").val() === "enabled";
+        const supplier_status = $("#supplier_status").val();
         const quantity = $("#quantity").val();
         const unit_price = $("#unit_price").val();
         const restock_threshold = $("#restock_threshold").val();
@@ -119,6 +119,53 @@ $(function () {
 
         ajax.done(function (res) {
             update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
+    // Disable a supplier
+    // ****************************************
+
+    $("#disable-btn").click(function () {
+        const inventory_id = $("#inventory_id").val();
+        const product_id = $("#product_id").val();
+        const product_name = $("#product_name").val();
+        const supplier_name = $("#supplier_name").val();
+        const supplier_id = $("#supplier_id").val();
+        const supplier_status = $("#supplier_status").val();
+        const quantity = $("#quantity").val();
+        const unit_price = $("#unit_price").val();
+        const restock_threshold = $("#restock_threshold").val();
+
+        const data = {
+            "inventory_id": inventory_id,
+            "product_id": product_id,
+            "product_name": product_name,
+            "supplier_id": supplier_id,
+            "supplier_name": supplier_name,
+            "supplier_status": supplier_status,
+            "quantity": quantity,
+            "unit_price": unit_price,
+            "restock_threshold": restock_threshold,
+        };
+
+        const ajax = $.ajax({
+            type: "PUT",
+            // url: "/inventory/" + inventory_id,
+            url: "/inventory/supplier/" + supplier_id,
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        })
+
+        //take first item
+        ajax.done(function (res) {
+            update_form_data(res[0])
             flash_message("Success")
         });
 
@@ -201,7 +248,7 @@ $(function () {
         const product_name = $("#product_name").val(); //supported
         const supplier_id = $("#supplier_id").val(); //supported
         const supplier_name = $("#supplier_name").val(); //supported
-        const supplier_status = $("#supplier_status").val() === "enabled";
+        const supplier_status = $("#supplier_status").val();
 
         let queryString = "";
 
@@ -252,65 +299,44 @@ $(function () {
         });
 
         ajax.done(function (res) {
-            //alert(res.toSource())
-            //table looks like:
-            //    <!-- Search Results -->
-            //     <div class="table-responsive col-md-12" id="search_results">
-            //         <table class="table-striped">
-            //             <thead>
-            //             <tr>
-            //                 <th class="col-md-1">Inventory ID</th>
-            //                 <th class="col-md-1">Product ID</th>
-            //                 <th class="col-md-2">Product Name</th>
-            //                 <th class="col-md-1">Supplier ID</th>
-            //                 <th class="col-md-2">Supplier Name</th>
-            //                 <th class="col-md-2">Supplier Status</th>
-            //                 <th class="col-md-1">Quantity</th>
-            //                 <th class="col-md-1">Restock Threshold</th>
-            //                 <th class="col-md-2">Unit Price</th>
-            //             </tr>
-            //             </thead>
-            //         </table>
-            //     </div>
-
+            // alert(res.toSource())
             $("#search_results").empty();
             $("#search_results").append('<table class="table-striped" cellpadding="10">');
             let header = '<tr>';
             header += '<th style="width:10%">Inventory ID</th>'
-            header += '<th style="width:40%">Product ID</th>'
-            header += '<th style="width:40%">Product Name</th>'
-            header += '<th style="width:40%">Supplier ID</th>'
-            header += '<th style="width:10%">Supplier Name</th>'
-            header += '<th style="width:10%">Supplier Status</th>'
+            header += '<th style="width:10%">Product ID</th>'
+            header += '<th style="width:20%">Product Name</th>'
+            header += '<th style="width:10%">Supplier ID</th>'
+            header += '<th style="width:20%">Supplier Name</th>'
+            header += '<th style="width:20%">Supplier Status</th>'
             header += '<th style="width:10%">Quantity</th>'
             header += '<th style="width:10%">Restock Threshold</th>'
-            header += '<th style="width:10%">Unit Price</th></tr>'
+            header += '<th style="width:20%">Unit Price</th></tr>'
             $("#search_results").append(header);
-            let firstProduct = "";
+            let first_item = "";
             for (let i = 0; i < res.length; i++) {
-                const product = res[i];
+                const inventory_item = res[i];
                 const row = "<tr><td>"
-                    + product.inventory_id + "</td><td>"
-                    + product.product_id + "</td><td>"
-                    + product.product_name + "</td><td>"
-                    + product.supplier_id + "</td><td>"
-                    + product.supplier_name + "</td></tr>"
-                    + product.supplier_status + "</td></tr>"
-                    + product.quantity + "</td></tr>"
-                    + product.restock_threshold + "</td></tr>"
-                    + product.unit_price + "</td></tr>"
-                    + "</td></tr>";
+                    + inventory_item.inventory_id + "</td><td>"
+                    + inventory_item.product_id + "</td><td>"
+                    + inventory_item.product_name + "</td><td>"
+                    + inventory_item.supplier_id + "</td><td>"
+                    + inventory_item.supplier_name + "</td><td>"
+                    + inventory_item.supplier_status + "</td><td>"
+                    + inventory_item.quantity + "</td><td>"
+                    + inventory_item.restock_threshold + "</td><td>"
+                    + inventory_item.unit_price + "</td></tr>";
                 $("#search_results").append(row);
                 if (i === 0) {
-                    firstProduct = product;
+                    first_item = inventory_item;
                 }
             }
 
             $("#search_results").append('</table>');
 
             // copy the first result to the form
-            if (firstProduct !== "") {
-                update_form_data(firstProduct)
+            if (first_item !== "") {
+                update_form_data(first_item)
             }
 
             flash_message("Success")

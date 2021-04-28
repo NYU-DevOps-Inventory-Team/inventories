@@ -164,6 +164,31 @@ class TestInventoryItem(unittest.TestCase):
 
         self.assertEqual(found_items, matches)
 
+    def test_find_by_supplier_status(self):
+        """ Find an inventory item by supplier status """
+        inventory_items = [
+            _create_test_inventory_item(
+                product_id=123, product_name="test product", quantity=100, restock_threshold=50,
+                supplier_name="test supplier1", supplier_id=123, unit_price=12.50, supplier_status="enabled"),
+            _create_test_inventory_item(
+                product_id=124, product_name="test product2", quantity=100, restock_threshold=50,
+                supplier_name="test supplier2", supplier_id=125, unit_price=12.50, supplier_status="enabled"),
+            _create_test_inventory_item(
+                product_id=125, product_name="test product2.5", quantity=100, restock_threshold=50,
+                supplier_name="test supplier2", supplier_id=125, unit_price=12.50, supplier_status="disabled"),
+            _create_test_inventory_item(
+                product_id=127, product_name="test product3", quantity=100, restock_threshold=50,
+                supplier_name="test supplier3", supplier_id=127, unit_price=12.50, supplier_status="enabled")]
+        for inventory_item in inventory_items:
+            inventory_item.create()
+
+        matches = [item.serialize() for item in inventory_items if item.supplier_status == "enabled"]
+
+        found_items = InventoryItem.find_by_supplier_status("enabled")
+        found_items = [item.serialize() for item in found_items]
+
+        self.assertEqual(found_items, matches)
+
     def test_update_a_inventory_item(self):
         """ Update an inventory item """
         test_item = self._create_test_inventory_items(1)[0]
