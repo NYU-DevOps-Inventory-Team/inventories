@@ -40,7 +40,7 @@ def step_impl(context):
             "restock_threshold": row['restock_threshold'],
             "quantity": row['quantity'],
             "unit_price": row['unit_price'],
-            "supplier_status": row['supplier_status'] in ['Enabled', 'enabled']
+            "supplier_status": row['supplier_status']
         }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)

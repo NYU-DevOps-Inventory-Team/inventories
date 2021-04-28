@@ -14,7 +14,7 @@ $(function () {
         if (res.supplier_status === "enabled") {
             $("#supplier_status").val("enabled");
         } else {
-            $("#supplier_status").val("enabled");
+            $("#supplier_status").val("disabled");
         }
         $("#quantity").val(res.quantity);
         $("#unit_price").val(res.unit_price);
@@ -28,7 +28,7 @@ $(function () {
         $("#product_name").val("");
         $("#supplier_id").val("");
         $("#supplier_name").val("");
-        $("#supplier_status").val("");
+        $("#supplier_status").val("enabled");
         $("#quantity").val("");
         $("#unit_price").val("");
         $("#restock_threshold").val("");
@@ -49,7 +49,7 @@ $(function () {
         const product_name = $("#product_name").val();
         const supplier_id = $("#supplier_id").val();
         const supplier_name = $("#supplier_name").val();
-        const supplier_status = $("#supplier_status").val() === "enabled";
+        const supplier_status = $("#supplier_status").val();
         const quantity = $("#quantity").val();
         const unit_price = $("#unit_price").val();
         const restock_threshold = $("#restock_threshold").val();
@@ -93,7 +93,52 @@ $(function () {
         const product_name = $("#product_name").val();
         const supplier_name = $("#supplier_name").val();
         const supplier_id = $("#supplier_id").val();
-        const supplier_status = $("#supplier_status").val() === "enabled";
+        const supplier_status = $("#supplier_status").val();
+        const quantity = $("#quantity").val();
+        const unit_price = $("#unit_price").val();
+        const restock_threshold = $("#restock_threshold").val();
+
+        const data = {
+            "inventory_id": inventory_id,
+            "product_id": product_id,
+            "product_name": product_name,
+            "supplier_id": supplier_id,
+            "supplier_name": supplier_name,
+            "supplier_status": supplier_status,
+            "quantity": quantity,
+            "unit_price": unit_price,
+            "restock_threshold": restock_threshold,
+        };
+
+        const ajax = $.ajax({
+            type: "PUT",
+            url: "/inventory/" + inventory_id,
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        })
+
+        ajax.done(function (res) {
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function (res) {
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
+    // Disable a supplier
+    // ****************************************
+
+    $("#disable-btn").click(function () {
+        const inventory_id = $("#inventory_id").val();
+        const product_id = $("#product_id").val();
+        const product_name = $("#product_name").val();
+        const supplier_name = $("#supplier_name").val();
+        const supplier_id = $("#supplier_id").val();
+        const supplier_status = "disabled";
         const quantity = $("#quantity").val();
         const unit_price = $("#unit_price").val();
         const restock_threshold = $("#restock_threshold").val();
@@ -201,7 +246,7 @@ $(function () {
         const product_name = $("#product_name").val(); //supported
         const supplier_id = $("#supplier_id").val(); //supported
         const supplier_name = $("#supplier_name").val(); //supported
-        const supplier_status = $("#supplier_status").val() === "enabled";
+        const supplier_status = $("#supplier_status").val();
 
         let queryString = "";
 
@@ -274,12 +319,11 @@ $(function () {
                     + inventory_item.product_id + "</td><td>"
                     + inventory_item.product_name + "</td><td>"
                     + inventory_item.supplier_id + "</td><td>"
-                    + inventory_item.supplier_name + "</td></tr>"
-                    + inventory_item.supplier_status + "</td></tr>"
-                    + inventory_item.quantity + "</td></tr>"
-                    + inventory_item.restock_threshold + "</td></tr>"
-                    + inventory_item.unit_price + "</td></tr>"
-                    + "</td></tr>";
+                    + inventory_item.supplier_name + "</td><td>"
+                    + inventory_item.supplier_status + "</td><td>"
+                    + inventory_item.quantity + "</td><td>"
+                    + inventory_item.restock_threshold + "</td><td>"
+                    + inventory_item.unit_price + "</td></tr>";
                 $("#search_results").append(row);
                 if (i === 0) {
                     first_item = inventory_item;
