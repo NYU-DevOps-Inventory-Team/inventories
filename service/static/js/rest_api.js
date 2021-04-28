@@ -138,7 +138,7 @@ $(function () {
         const product_name = $("#product_name").val();
         const supplier_name = $("#supplier_name").val();
         const supplier_id = $("#supplier_id").val();
-        const supplier_status = "disabled";
+        const supplier_status = $("#supplier_status").val();
         const quantity = $("#quantity").val();
         const unit_price = $("#unit_price").val();
         const restock_threshold = $("#restock_threshold").val();
@@ -157,13 +157,15 @@ $(function () {
 
         const ajax = $.ajax({
             type: "PUT",
-            url: "/inventory/" + inventory_id,
+            // url: "/inventory/" + inventory_id,
+            url: "/inventory/supplier/" + supplier_id,
             contentType: "application/json",
             data: JSON.stringify(data)
         })
 
+        //take first item
         ajax.done(function (res) {
-            update_form_data(res)
+            update_form_data(res[0])
             flash_message("Success")
         });
 

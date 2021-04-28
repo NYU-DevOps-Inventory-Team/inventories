@@ -100,8 +100,6 @@ Scenario: Create a Inventory Item
      Then I should not see "product1" in the results
 
 # DELETE
-#Scenario: Delete an inventory item
-
 Scenario: Delete an inventory item
     When I visit the "Home Page"
     And I set the "product_name" to "product1"
@@ -116,19 +114,12 @@ Scenario: Delete an inventory item
     Then I should not see "product1" in the results
 
 # ACTION
-#Scenario: Disable inventory item by supplier ID
-Scenario: Disable a supplier
+Scenario: Disable a supplier by supplier ID
     When I visit the "Home Page"
     And I set the "product_name" to "product1"
     And I press the "Search" button
     Then I should see "product1" in the "product_name" field
-    And I should see "supplier1" in the "supplier_name" field
-    And I should see "1" in the "supplier_id" field
-    And I should see "4" in the "quantity" field
-    And I should see "2" in the "restock_threshold" field
-    And I should see "5" in the "unit_price" field
     And I should see "enabled" in the "supplier_status" field
-
 
     When I press the "Disable" button
     Then I should see the message "Success"
