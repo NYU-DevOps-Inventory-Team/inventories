@@ -158,12 +158,12 @@ class InventoryItem(db.Model):
         logger.info("Processing supplier id query for %s ...", supplier_id)
         return cls.query.filter(cls.supplier_id == supplier_id)
 
-    # @classmethod
-    # def find_by_supplier_status(cls, supplier_status):
-    #     """Returns all InventoryItems with the given supplier_status
+    @classmethod
+    def find_by_supplier_status(cls, supplier_status):
+        """Returns all InventoryItems with the given supplier_status
 
-    #     Args:
-    #         supplier_status (string): the supplier status of the InventoryItems you want to match
-    #     """
-    #     logger.info("Processing supplier id query for %s ...", supplier_status)
-    #     return cls.query.filter(cls.supplier_status == supplier_status)
+        Args:
+            supplier_status (string): the supplier status of the InventoryItems you want to match
+        """
+        logger.info("Processing supplier status query for %s ...", supplier_status)
+        return cls.query.filter(cls.supplier_status == supplier_status)
