@@ -104,7 +104,7 @@ Scenario: Delete an inventory item
     When I visit the "Home Page"
     And I set the "product_name" to "product1"
     And I press the "search" button
-    Then I should see "supplier1" in the "product_id" field
+    Then I should see "1" in the "product_id" field
     When I copy the "inventory_id" field
     And I press the "clear" button
     And I paste the "inventory_id" field
