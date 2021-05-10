@@ -128,5 +128,6 @@ Feature: The inventory store service back-end
     And I press the "clear" button
     And I paste the "inventory_id" field
     And I press the "retrieve" button
-    Then I should see "disabled" in the "supplier_status" field
+    Then I should see "product1" in the "product_name" field
+    And I should see "disabled" in the "supplier_status" field
 
