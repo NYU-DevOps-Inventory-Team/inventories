@@ -104,15 +104,13 @@ Feature: The inventory store service back-end
     When I visit the "Home Page"
     And I set the "product_name" to "product1"
     And I press the "search" button
-    Then I should see "1" in the "product_id" field
+    Then I should see "product1" in the "product_name" field
     When I copy the "inventory_id" field
     And I press the "clear" button
     And I paste the "inventory_id" field
     And I press the "Delete" button
-    Then I should see the message "Inventory ID has been Deleted!"
-    When I press the "clear" button
-    Then the "inventory_id" field should be empty
-    When I press the "search" button
+    And I press the "clear" button
+    And I press the "search" button
     Then I should not see "product1" in the results
 
 # ACTION
