@@ -99,20 +99,6 @@ Feature: The inventory store service back-end
     Then I should see "product5" in the results
     Then I should not see "product1" in the results
 
-# DELETE
-  Scenario: Delete an inventory item
-    When I visit the "Home Page"
-    And I set the "product_name" to "product1"
-    And I press the "search" button
-    Then I should see "product1" in the "product_name" field
-    When I copy the "inventory_id" field
-    And I press the "clear" button
-    And I paste the "inventory_id" field
-    And I press the "Delete" button
-    And I press the "clear" button
-    And I press the "search" button
-    Then I should not see "product1" in the results
-
 # ACTION
   Scenario: Disable a supplier by supplier ID
     When I visit the "Home Page"
@@ -128,5 +114,19 @@ Feature: The inventory store service back-end
     And I press the "clear" button
     And I paste the "inventory_id" field
     And I press the "retrieve" button
-    Then I should see "disabled" in the "supplier_status" field
+    Then I should see "product1" in the "product_name" field
+    And I should see "disabled" in the "supplier_status" field
 
+# DELETE
+  Scenario: Delete an inventory item
+    When I visit the "Home Page"
+    And I set the "product_name" to "product1"
+    And I press the "search" button
+    Then I should see "product1" in the "product_name" field
+    When I copy the "inventory_id" field
+    And I press the "clear" button
+    And I paste the "inventory_id" field
+    And I press the "Delete" button
+    And I press the "clear" button
+    And I press the "search" button
+    Then I should not see "product1" in the results
